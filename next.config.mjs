@@ -18,5 +18,21 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        port: "",
+        pathname: `/${process.env.CLOUDINARY_CLOUD_NAME}/**`,
+      },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+        port: "",
+        pathname: `/**`,
+      },
+    ],
+  },
 };
 export default config;
