@@ -1,4 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
+import { Analytics } from "@vercel/analytics/react";
 
 import { type AppType } from "next/app";
 
@@ -10,6 +11,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
       <Component {...pageProps} />
+      <Analytics />
     </ClerkProvider>
   );
 };
