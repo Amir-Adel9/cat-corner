@@ -26,6 +26,12 @@ const config = {
         port: "",
         pathname: `/${process.env.CLOUDINARY_CLOUD_NAME}/**`,
       },
+      {
+        protocol: "https",
+        hostname: "images.clerk.dev",
+        port: "",
+        pathname: `/**`,
+      },
     ],
   },
 };
