@@ -10,8 +10,9 @@ import { api, type RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
-import LoadingSpinner from "~/components/loading";
-import LoadingPage from "~/components/loading";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -21,26 +22,45 @@ dayjs.updateLocale("en", {
     future: "in %s",
     past: "%s ago",
     s: "a few seconds",
-    m: "a minute",
-    mm: "%d minutes",
-    h: "h",
+    m: "1m",
+    mm: "%dm",
+    h: "1h",
     hh: "%dh",
-    d: "a day",
-    dd: "%d days",
-    M: "a month",
-    MM: "%d months",
-    y: "a year",
-    yy: "%d years",
+    d: "1d",
+    dd: "%dd",
+    M: "1m",
+    MM: "%dm",
+    y: "1y",
+    yy: "%dy",
   },
 });
 
 const CreatePostWizard = () => {
   const { user } = useUser();
-  console.log("user", user);
+
+  const [postContent, setPostContent] = useState("");
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.createPost.useMutation({
+    onSuccess: () => {
+      setPostContent("");
+      void ctx.posts.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.message;
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        toast.error("Failed to post! Please try again later.");
+      }
+    },
+  });
+
   if (!user) return null;
 
   return (
-    <div className="justify-star gap- flex h-1/6 items-center gap-5 border-b pl-5 md:w-[95%]">
+    <div className="flex items-center gap-5 border-b p-16 pl-5 md:w-[95%]">
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -50,9 +70,28 @@ const CreatePostWizard = () => {
       />
       <input
         type="text"
+        value={postContent}
         placeholder="Type some text..."
+        disabled={isPosting}
         className="grow bg-transparent outline-none"
+        onChange={(e) => setPostContent(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (postContent) {
+              mutate({ content: postContent });
+            }
+          }
+        }}
       />
+      {postContent && !isPosting && (
+        <button onClick={() => mutate({ content: postContent })}>Post</button>
+      )}
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   );
 };
@@ -103,7 +142,7 @@ const Feed = () => {
 
   return (
     <div>
-      {[...data, ...data]?.map((postData) => (
+      {data.map((postData) => (
         <PostView {...postData} key={postData.post.id} />
       ))}
     </div>
@@ -137,8 +176,8 @@ const Home: NextPage = () => {
 
   const BottomNavBar = () => {
     return (
-      <div className="absolute bottom-0 flex h-[7%] w-full items-center justify-center bg-slate-100 md:hidden">
-        <div className="text-black ">
+      <div className="fixed bottom-0 flex h-[7%] w-full items-center justify-center border-t bg-black md:hidden">
+        <div className=" ">
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
         </div>
