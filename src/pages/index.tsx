@@ -10,8 +10,8 @@ import { api, type RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
-import LoadingSpinner from "~/components/loading";
 import LoadingPage from "~/components/loading";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -21,8 +21,8 @@ dayjs.updateLocale("en", {
     future: "in %s",
     past: "%s ago",
     s: "a few seconds",
-    m: "a minute",
-    mm: "%d minutes",
+    m: "1m",
+    mm: "%dm",
     h: "h",
     hh: "%dh",
     d: "a day",
@@ -36,11 +36,22 @@ dayjs.updateLocale("en", {
 
 const CreatePostWizard = () => {
   const { user } = useUser();
-  console.log("user", user);
+
+  const [postContent, setPostContent] = useState("");
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading: isPosting } = api.posts.createPost.useMutation({
+    onSuccess: () => {
+      setPostContent("");
+      void ctx.posts.invalidate();
+    },
+  });
+
   if (!user) return null;
 
   return (
-    <div className="justify-star gap- flex h-1/6 items-center gap-5 border-b pl-5 md:w-[95%]">
+    <div className="flex items-center gap-5 border-b p-16 pl-5 md:w-[95%]">
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -50,9 +61,13 @@ const CreatePostWizard = () => {
       />
       <input
         type="text"
+        value={postContent}
         placeholder="Type some text..."
+        disabled={isPosting}
         className="grow bg-transparent outline-none"
+        onChange={(e) => setPostContent(e.target.value)}
       />
+      <button onClick={() => mutate({ content: postContent })}>Post</button>
     </div>
   );
 };
@@ -103,7 +118,7 @@ const Feed = () => {
 
   return (
     <div>
-      {[...data, ...data]?.map((postData) => (
+      {data.map((postData) => (
         <PostView {...postData} key={postData.post.id} />
       ))}
     </div>
@@ -137,8 +152,8 @@ const Home: NextPage = () => {
 
   const BottomNavBar = () => {
     return (
-      <div className="absolute bottom-0 flex h-[7%] w-full items-center justify-center bg-slate-100 md:hidden">
-        <div className="text-black ">
+      <div className="fixed bottom-0 flex h-[7%] w-full items-center justify-center border-t bg-black md:hidden">
+        <div className=" ">
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
         </div>
