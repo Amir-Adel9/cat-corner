@@ -21,6 +21,7 @@
     "@upstash/ratelimit": "^0.4.0",
     "@upstash/redis": "^1.20.1",
     "@vercel/analytics": "^0.1.11",
+    "cloudinary": "^1.35.0",
     "dayjs": "^1.11.7",
     "next": "^13.2.1",
     "react": "18.2.0",
@@ -49,5 +50,9 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.8.0"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "jsxSingleQuote": true
   }
 }
