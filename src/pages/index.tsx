@@ -43,7 +43,14 @@ const Home: NextPage = () => {
 
   const SideNavBar = () => {
     return (
-      <div className="fixed  z-10  hidden h-full bg-white md:flex md:w-[5%]">
+      <div className="fixed z-10 hidden h-full items-center bg-white md:flex md:w-[5%] md:flex-col">
+        <Image
+          src="/logo.png"
+          width={50}
+          height={50}
+          className="rounded-full"
+          alt="Cat Corner Logo"
+        />
         <div className="absolute bottom-2 text-black ">
           {!user.isSignedIn && <SignInButton />}
           {!!user.isSignedIn && <SignOutButton />}
@@ -131,12 +138,11 @@ const Home: NextPage = () => {
       <Head>
         <title>Cat Corner</title>
         <meta name="description" content="Cat Corner by Amir Adel" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon.png" />
       </Head>
       <main className="">
         <div className="relative flex h-screen w-full overflow-x-hidden">
           <SideNavBar />
-
           <div className="relative flex w-full grow flex-col md:items-end">
             {user.isSignedIn && <CreatePostWizard />}
             <div className="w-full md:w-[95%] ">
