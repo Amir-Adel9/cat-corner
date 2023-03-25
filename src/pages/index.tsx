@@ -125,32 +125,21 @@ const CreatePostWizard = () => {
             hidden={!postImage}
             onChange={(e) => {
               e.preventDefault();
-              console.log('event', e.target.value);
               if (e.target.files) {
                 setPostImage(e.target.files?.[0] as File);
                 getBase64(e.target.files?.[0] as File);
+                // const url = `https://api.thecatapi.com/v1/breeds`;
+                // const api_key = 'DEMO_API_KEY';
 
-                void fetch(
-                  'https://freeimage.host/api/1/upload?key=6d207e02198a847aa98d0a2a901485a5',
-                  {
-                    method: 'POST',
-                    headers: {
-                      // 'x-api-key':
-                      //   'live_hzfmHIUqphyTaAHvDDhmLFc5yw5KmYNewzOIHf8AwbJgrZLKG3f2BqvWbBSUQQxB',
-                      Accept: '*/*',
-                      Host: 'freeimage.host',
-                      'Content-Type': 'multipart/form-data',
-                      'Access-Control-Allow-Origin': 'http://localhost:3001',
-                      'Access-Control-Request-Headers': '*',
-                    },
-                    body: JSON.stringify({
-                      title: 'BMW Pencil',
-                      /* other product data */
-                    }),
-                  }
-                )
-                  .then((res) => res.json())
-                  .then(console.log);
+                // void fetch(url, {
+                //   headers: {
+                //     'x-api-key': api_key,
+                //   },
+                // })
+                //   .then((response) => {
+                //     return response.json();
+                //   })
+                //   .then(console.log);
               }
             }}
           />
