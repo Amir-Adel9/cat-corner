@@ -26,7 +26,7 @@ const filterUserForClient = (user: User) => {
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
-  limiter: Ratelimit.slidingWindow(3, "10 m"),
+  limiter: Ratelimit.slidingWindow(4, "1 m"),
   analytics: true,
 });
 

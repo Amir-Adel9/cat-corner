@@ -10,8 +10,9 @@ import { api, type RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import updateLocale from "dayjs/plugin/updateLocale";
-import LoadingPage from "~/components/loading";
+import { LoadingPage, LoadingSpinner } from "~/components/loading";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -23,14 +24,14 @@ dayjs.updateLocale("en", {
     s: "a few seconds",
     m: "1m",
     mm: "%dm",
-    h: "h",
+    h: "1h",
     hh: "%dh",
-    d: "a day",
-    dd: "%d days",
-    M: "a month",
-    MM: "%d months",
-    y: "a year",
-    yy: "%d years",
+    d: "1d",
+    dd: "%dd",
+    M: "1m",
+    MM: "%dm",
+    y: "1y",
+    yy: "%dy",
   },
 });
 
@@ -45,6 +46,14 @@ const CreatePostWizard = () => {
     onSuccess: () => {
       setPostContent("");
       void ctx.posts.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.message;
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        toast.error("Failed to post! Please try again later.");
+      }
     },
   });
 
@@ -66,8 +75,23 @@ const CreatePostWizard = () => {
         disabled={isPosting}
         className="grow bg-transparent outline-none"
         onChange={(e) => setPostContent(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (postContent) {
+              mutate({ content: postContent });
+            }
+          }
+        }}
       />
-      <button onClick={() => mutate({ content: postContent })}>Post</button>
+      {postContent && !isPosting && (
+        <button onClick={() => mutate({ content: postContent })}>Post</button>
+      )}
+      {isPosting && (
+        <div className="flex items-center justify-center">
+          <LoadingSpinner size={20} />
+        </div>
+      )}
     </div>
   );
 };
