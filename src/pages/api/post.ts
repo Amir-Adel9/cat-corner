@@ -29,10 +29,13 @@ export default async function handlePost(
 
   const imageURL = await uploadImage(imageBase64);
 
+  console.log('imageURL: ', imageURL);
+
   const response = await createPostCaller.createPost({
     content: postContent,
     imageURL: imageURL,
   });
 
+  console.log('response: ', response);
   res.status(200).json(response);
 }
