@@ -171,7 +171,7 @@ const PostView = (props: PostWithUser) => {
         <div className='flex items-center justify-around gap-2 '>
           <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
             <span className='font-bold'>{`${author.firstName as string} ${
-              author.lastName as string
+              author.lastName ? author.lastName : ''
             }`}</span>
             <span className='text-sm opacity-70 '>{`@${
               author.username as string
