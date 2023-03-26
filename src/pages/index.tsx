@@ -151,7 +151,6 @@ const CreatePostWizard = () => {
           onClick={() =>
             mutate({
               content: postContent,
-              catImageBase64: base64code,
             })
           }
         >
