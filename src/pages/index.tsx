@@ -18,6 +18,7 @@ import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import ImageIcon from '~/components/svgs/image';
+import { env } from '../env.mjs';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -125,10 +126,31 @@ const CreatePostWizard = () => {
             hidden={!postImage}
             onChange={(e) => {
               e.preventDefault();
-              console.log('event', e.target.value);
               if (e.target.files) {
+                const catAPIKey = env.NEXT_PUBLIC_CAT_API_KEY;
                 setPostImage(e.target.files?.[0] as File);
                 getBase64(e.target.files?.[0] as File);
+                console.log(catAPIKey);
+                const myHeaders = new Headers();
+                myHeaders.append('x-api-key', `${catAPIKey}`);
+
+                const formdata = new FormData();
+                formdata.append('file', e.target.files[0] as Blob);
+
+                const requestOptions = {
+                  method: 'POST',
+                  headers: myHeaders,
+                  body: formdata,
+                  redirect: 'follow',
+                };
+
+                fetch(
+                  'https://api.thecatapi.com/v1/images/upload',
+                  requestOptions as RequestInit
+                )
+                  .then((response) => response.text())
+                  .then((result) => console.log(result))
+                  .catch((error) => console.log('error', error));
               }
             }}
           />
@@ -170,9 +192,9 @@ const PostView = (props: PostWithUser) => {
       <div className='flex h-full flex-col gap-3'>
         <div className='flex items-center justify-around gap-2 '>
           <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
-            <span className='font-bold'>{`${author.firstName as string} ${
-              author.lastName ? author.lastName : ''
-            }`}</span>
+            <span className='font-bold'>{`${
+              author.firstName ? author.firstName : ''
+            } ${author.lastName ? author.lastName : ''}`}</span>
             <span className='text-sm opacity-70 '>{`@${
               author.username as string
             }`}</span>
@@ -181,7 +203,6 @@ const PostView = (props: PostWithUser) => {
           <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
         {post.content}
-
         <Image
           src={post.catImageURL}
           alt={`${post.authorId}'s cat image`}
