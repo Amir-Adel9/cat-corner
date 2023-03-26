@@ -22,10 +22,8 @@ export default async function handlePost(
 ) {
   const session = getAuth(req);
   const currentUserId = session.userId;
-  const createPostCaller = postsRouter.createCaller({
-    currentUserId: currentUserId,
-    prisma: prisma,
-  });
+  const ctx = { currentUserId: currentUserId, prisma: prisma };
+  const createPostCaller = postsRouter.createCaller(ctx);
 
   const { postContent, imageBase64 } = await getPostData(req);
 

@@ -54,7 +54,8 @@ const CreatePostWizard = () => {
 
   const ctx = api.useContext();
 
-  const { mutate, isLoading: isPosting } = api.posts.createPost.useMutation({
+  const { isLoading: isPosting } = api.posts.createPost.useMutation({});
+  const { mutate } = api.posts.invalidatePosts.useMutation({
     onSuccess: () => {
       setPostContent('');
       setPostImage(null);
@@ -92,7 +93,7 @@ const CreatePostWizard = () => {
     void fetch('/api/post', {
       method: 'POST',
       body: postData,
-    });
+    }).then(() => mutate());
   };
 
   if (!user) return null;

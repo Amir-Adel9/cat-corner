@@ -88,4 +88,8 @@ export const postsRouter = createTRPCRouter({
 
       return post;
     }),
+
+  invalidatePosts: publicProcedure.mutation(() => {
+    console.log('posts invalidated');
+  }),
 });
