@@ -18,6 +18,7 @@ import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import ImageIcon from '~/components/svgs/image';
+
 import { env } from '../env.mjs';
 
 dayjs.extend(relativeTime);
@@ -132,10 +133,7 @@ const CreatePostWizard = () => {
                 getBase64(e.target.files?.[0] as File);
 
                 const myHeaders = new Headers();
-                myHeaders.append(
-                  'x-api-key',
-                  'live_hzfmHIUqphyTaAHvDDhmLFc5yw5KmYNewzOIHf8AwbJgrZLKG3f2BqvWbBSUQQxB'
-                );
+                myHeaders.append('x-api-key', `${env.NEXT_PUBLIC_CAT_API_KEY}`);
 
                 const formdata = new FormData();
                 formdata.append('file', e.target.files[0] as Blob);
