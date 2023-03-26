@@ -7,13 +7,11 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function uploadImage(
-  imageBase64Code: string
-): Promise<UploadApiResponse> {
+export async function uploadImage(imageBase64Code: string): Promise<string> {
   try {
-    const imageData = cloudinary.uploader.upload(imageBase64Code);
-    return imageData;
+    const imageData = await cloudinary.uploader.upload(imageBase64Code);
+    return imageData.secure_url;
   } catch (error) {
-    return error as UploadApiResponse;
+    return error as string;
   }
 }

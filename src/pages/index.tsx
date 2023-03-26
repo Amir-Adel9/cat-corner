@@ -20,6 +20,7 @@ import toast from 'react-hot-toast';
 import ImageIcon from '~/components/svgs/image';
 
 import { env } from '../env.mjs';
+import { json } from 'stream/consumers';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -85,6 +86,16 @@ const CreatePostWizard = () => {
     };
   };
 
+  const sendPostData = () => {
+    const postData = new FormData();
+    postData.append('postContent', postContent);
+    postData.append('imageBase64', base64code);
+    void fetch('/api/post', {
+      method: 'POST',
+      body: postData,
+    });
+  };
+
   if (!user) return null;
 
   return (
@@ -107,8 +118,11 @@ const CreatePostWizard = () => {
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
-              if (postContent) {
-                mutate({ content: postContent, catImageBase64: base64code });
+              if (!imageHasCat?.includes('approved')) {
+                toast.error('Image does not have a cat');
+                return;
+              } else {
+                sendPostData();
               }
             }
           }}
@@ -135,13 +149,13 @@ const CreatePostWizard = () => {
                 const myHeaders = new Headers();
                 myHeaders.append('x-api-key', `${env.NEXT_PUBLIC_CAT_API_KEY}`);
 
-                const formdata = new FormData();
-                formdata.append('file', e.target.files[0] as Blob);
+                const formData = new FormData();
+                formData.append('file', e.target.files[0] as Blob);
 
                 const requestOptions = {
                   method: 'POST',
                   headers: myHeaders,
-                  body: formdata,
+                  body: formData,
                   redirect: 'follow',
                 };
 
@@ -151,7 +165,10 @@ const CreatePostWizard = () => {
                 )
                   .then((response) => response.text())
                   .then((result) => setImageHasCat(result))
-                  .catch((error) => console.log('error', error));
+                  .catch((error) => {
+                    console.log('error', error);
+                    setImageHasCat('approved');
+                  });
               }
             }}
           />
@@ -165,7 +182,7 @@ const CreatePostWizard = () => {
               toast.error('Image does not have a cat');
               return;
             } else {
-              mutate({ content: postContent, catImageBase64: base64code });
+              sendPostData();
             }
           }}
         >
