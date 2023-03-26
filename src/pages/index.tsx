@@ -165,13 +165,17 @@ const PostView = (props: PostWithUser) => {
         width={48}
         height={48}
         className='h-full w-12 rounded-full'
-        alt={`${author.username}'s profile picture`}
+        alt={`${author.username as string}'s profile picture`}
       />
       <div className='flex h-full flex-col gap-3'>
         <div className='flex items-center justify-around gap-2 '>
           <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
-            <span className='font-bold'>{`${author.firstName} ${author.lastName}`}</span>
-            <span className='text-sm opacity-70 '>{`@${author.username}`}</span>
+            <span className='font-bold'>{`${author.firstName as string} ${
+              author.lastName as string
+            }`}</span>
+            <span className='text-sm opacity-70 '>{`@${
+              author.username as string
+            }`}</span>
           </div>
 
           <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
