@@ -125,21 +125,10 @@ const CreatePostWizard = () => {
             hidden={!postImage}
             onChange={(e) => {
               e.preventDefault();
+              console.log('event', e.target.value);
               if (e.target.files) {
                 setPostImage(e.target.files?.[0] as File);
                 getBase64(e.target.files?.[0] as File);
-                // const url = `https://api.thecatapi.com/v1/breeds`;
-                // const api_key = 'DEMO_API_KEY';
-
-                // void fetch(url, {
-                //   headers: {
-                //     'x-api-key': api_key,
-                //   },
-                // })
-                //   .then((response) => {
-                //     return response.json();
-                //   })
-                //   .then(console.log);
               }
             }}
           />
@@ -149,9 +138,7 @@ const CreatePostWizard = () => {
       {postImage && !isPosting && (
         <button
           onClick={() =>
-            mutate({
-              content: postContent,
-            })
+            mutate({ content: postContent, catImageBase64: base64code })
           }
         >
           Post
