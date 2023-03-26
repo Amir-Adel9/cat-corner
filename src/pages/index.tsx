@@ -47,7 +47,7 @@ const CreatePostWizard = () => {
 
   const [postContent, setPostContent] = useState('');
   const [postImage, setPostImage] = useState<File | null>();
-  const [imageHasCat, setImageHasCat] = useState<boolean>();
+  const [imageHasCat, setImageHasCat] = useState<string>();
   const [base64code, setBase64code] = useState('');
 
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -149,7 +149,7 @@ const CreatePostWizard = () => {
                   'https://api.thecatapi.com/v1/images/upload',
                   requestOptions as RequestInit
                 )
-                  .then((response) => response.ok)
+                  .then((response) => response.text())
                   .then((result) => setImageHasCat(result))
                   .catch((error) => console.log('error', error));
               }
@@ -161,7 +161,7 @@ const CreatePostWizard = () => {
       {postImage && !isPosting && (
         <button
           onClick={() => {
-            if (!imageHasCat) {
+            if (!imageHasCat?.includes('approved')) {
               toast.error('Image does not have a cat');
               return;
             } else {
