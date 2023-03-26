@@ -149,7 +149,10 @@ const CreatePostWizard = () => {
       {postImage && !isPosting && (
         <button
           onClick={() =>
-            mutate({ content: postContent, catImageBase64: base64code })
+            mutate({
+              content: postContent,
+              catImageBase64: JSON.stringify(base64code),
+            })
           }
         >
           Post
