@@ -1,4 +1,4 @@
-import { Fields, IncomingForm } from 'formidable';
+import { IncomingForm } from 'formidable';
 import { type NextApiRequest } from 'next';
 
 export async function getPostData(req: NextApiRequest) {
@@ -11,6 +11,7 @@ export async function getPostData(req: NextApiRequest) {
           postContent: fields.postContent as string,
           imageBase64: fields.imageBase64 as string,
         });
+        console.log('fields', fields);
       });
     }
   );

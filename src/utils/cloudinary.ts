@@ -1,4 +1,3 @@
-import type { UploadApiResponse } from 'cloudinary';
 import { v2 as cloudinary } from 'cloudinary';
 
 cloudinary.config({
@@ -8,10 +7,14 @@ cloudinary.config({
 });
 
 export async function uploadImage(imageBase64Code: string): Promise<string> {
+  console.log('7amada');
   try {
+    console.log('7amo');
     const imageData = await cloudinary.uploader.upload(imageBase64Code);
+    console.log('imageData', imageData);
     return imageData.secure_url;
   } catch (error) {
+    console.log('da error');
     return error as string;
   }
 }

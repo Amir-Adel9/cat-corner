@@ -93,7 +93,10 @@ const CreatePostWizard = () => {
     void fetch('/api/post', {
       method: 'POST',
       body: postData,
-    }).then(() => mutate());
+    }).then((res) => {
+      console.log('resdas', res);
+      mutate();
+    });
   };
 
   if (!user) return null;
