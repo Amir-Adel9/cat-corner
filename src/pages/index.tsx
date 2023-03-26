@@ -46,6 +46,7 @@ const CreatePostWizard = () => {
 
   const [postContent, setPostContent] = useState('');
   const [postImage, setPostImage] = useState<File | null>();
+  const [imageHasCat, setImageHasCat] = useState<boolean>();
   const [base64code, setBase64code] = useState('');
 
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -127,12 +128,14 @@ const CreatePostWizard = () => {
             onChange={(e) => {
               e.preventDefault();
               if (e.target.files) {
-                const catAPIKey = env.NEXT_PUBLIC_CAT_API_KEY;
                 setPostImage(e.target.files?.[0] as File);
                 getBase64(e.target.files?.[0] as File);
-                console.log(catAPIKey);
+
                 const myHeaders = new Headers();
-                myHeaders.append('x-api-key', `${catAPIKey}`);
+                myHeaders.append(
+                  'x-api-key',
+                  'live_hzfmHIUqphyTaAHvDDhmLFc5yw5KmYNewzOIHf8AwbJgrZLKG3f2BqvWbBSUQQxB'
+                );
 
                 const formdata = new FormData();
                 formdata.append('file', e.target.files[0] as Blob);
@@ -148,8 +151,8 @@ const CreatePostWizard = () => {
                   'https://api.thecatapi.com/v1/images/upload',
                   requestOptions as RequestInit
                 )
-                  .then((response) => response.text())
-                  .then((result) => console.log(result))
+                  .then((response) => response.ok)
+                  .then((result) => setImageHasCat(result))
                   .catch((error) => console.log('error', error));
               }
             }}
@@ -159,9 +162,14 @@ const CreatePostWizard = () => {
 
       {postImage && !isPosting && (
         <button
-          onClick={() =>
-            mutate({ content: postContent, catImageBase64: base64code })
-          }
+          onClick={() => {
+            if (!imageHasCat) {
+              toast.error('Image does not have a cat');
+              return;
+            } else {
+              mutate({ content: postContent, catImageBase64: base64code });
+            }
+          }}
         >
           Post
         </button>
