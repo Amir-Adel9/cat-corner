@@ -13,7 +13,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 
 import { LoadingPage, LoadingSpinner } from '~/components/loading';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import toast from 'react-hot-toast';
 
@@ -78,7 +78,7 @@ const CreatePostWizard = () => {
   if (!user) return null;
 
   return (
-    <div className='flex items-start gap-5 border-b p-16 pl-5 pb-0 md:w-[95%]'>
+    <div className='flex items-start gap-5 border-b p-16 pl-5 pb-0 w-full'>
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -149,7 +149,7 @@ const CreatePostWizard = () => {
                   })
                   .catch((error) => {
                     console.log('error', error);
-                    setImageHasCat('approved');
+                    setIsCheckingForCat(false);
                   });
 
                 const imageFormData = new FormData();
@@ -271,15 +271,26 @@ const Home: NextPage = () => {
   if (!userLoaded) return <div />;
 
   const SideNavBar = () => {
+    const [isHovered, setIsHovered] = useState(false);
     return (
-      <div className='fixed z-10 hidden h-full items-center bg-white md:flex md:w-[5%] md:flex-col'>
-        <Image
-          src='/logo.png'
-          width={50}
-          height={50}
-          className='rounded-full'
-          alt='Cat Corner Logo'
-        />
+      <div
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className={`fixed z-10 hidden h-full items-center duration-300 bg-white md:flex md:flex-col md:w-[5%]  hover:w-[15%] ${''}`}
+      >
+        <div className='flex justify-center items-center'>
+          <Image
+            src='/logo.png'
+            width={50}
+            height={50}
+            className='rounded-full '
+            alt='Cat Corner Logo'
+          />
+          <span className='text-black ml-3' hidden={!isHovered}>
+            Cat Corner
+          </span>
+        </div>
+
         <div className='absolute bottom-2 text-black '>
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
@@ -307,11 +318,11 @@ const Home: NextPage = () => {
         <link rel='icon' href='/favicon.png' />
       </Head>
       <main className=''>
-        <div className='relative flex h-screen w-full overflow-x-hidden'>
+        <div className={`relative flex h-screen w-full overflow-x-hidden `}>
           <SideNavBar />
-          <div className='relative flex w-full grow flex-col md:items-end'>
-            {isSignedIn && <CreatePostWizard />}
-            <div className='w-full md:w-[95%] '>
+          <div className='relative flex w-full flex-col grow md:items-end'>
+            <div className='duration-300 md:w-[95%]'>
+              {isSignedIn && <CreatePostWizard />}
               <Feed />
             </div>
             <BottomNavBar />
