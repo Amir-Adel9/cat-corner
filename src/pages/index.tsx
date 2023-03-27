@@ -56,37 +56,24 @@ const CreatePostWizard = () => {
 
   const ctx = api.useContext();
 
-  const { mutate, isLoading: isPosting } =
-    api.posts.invalidatePosts.useMutation({
-      onSuccess: () => {
-        setPostContent('');
-        setPostImage(null);
-        if (imageInputRef.current && imageInputRef.current.files) {
-          imageInputRef.current.value = null!;
-        }
-        void ctx.posts.invalidate();
-      },
-      onError: (e) => {
-        const errorMessage = e.message;
-        if (errorMessage) {
-          toast.error(errorMessage);
-        } else {
-          toast.error('Failed to post! Please try again later.');
-        }
-      },
-    });
-
-  const sendPostData = () => {
-    const postData = new FormData();
-    postData.append('postContent', postContent);
-    postData.append('imageUrl', imageUrl);
-    void fetch('/api/post', {
-      method: 'POST',
-      body: postData,
-    }).then(() => {
-      mutate();
-    });
-  };
+  const { mutate, isLoading: isPosting } = api.posts.createPost.useMutation({
+    onSuccess: () => {
+      setPostContent('');
+      setPostImage(null);
+      if (imageInputRef.current && imageInputRef.current.files) {
+        imageInputRef.current.value = null!;
+      }
+      void ctx.posts.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.message;
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        toast.error('Failed to post! Please try again later.');
+      }
+    },
+  });
 
   if (!user) return null;
 
@@ -114,7 +101,7 @@ const CreatePostWizard = () => {
                 toast.error('Image does not have a cat');
                 return;
               } else {
-                sendPostData();
+                mutate({ content: postContent, imageUrl: imageUrl });
               }
             }
           }}
@@ -202,7 +189,7 @@ const CreatePostWizard = () => {
               toast.error('Image does not have a cat');
               return;
             } else {
-              sendPostData();
+              mutate({ content: postContent, imageUrl: imageUrl });
             }
           }}
         >

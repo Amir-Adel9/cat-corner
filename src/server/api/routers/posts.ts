@@ -69,7 +69,7 @@ export const postsRouter = createTRPCRouter({
 
   createPost: privateProcedure
     .input(
-      z.object({ content: z.string().optional(), imageURL: z.string().url() })
+      z.object({ content: z.string().optional(), imageUrl: z.string().url() })
     )
     .mutation(async ({ ctx, input }) => {
       const authorId = ctx.currentUserId;
@@ -78,18 +78,16 @@ export const postsRouter = createTRPCRouter({
 
       if (!success) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
 
+      const catImageUrl = await uploadImage(input.imageUrl);
+
       const post = await ctx.prisma.post.create({
         data: {
           authorId,
           content: input.content ? input.content : '',
-          catImageURL: input.imageURL,
+          catImageURL: catImageUrl,
         },
       });
 
       return post;
     }),
-
-  invalidatePosts: publicProcedure.mutation(() => {
-    ('posts invalidated');
-  }),
 });
