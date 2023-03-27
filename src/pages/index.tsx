@@ -47,54 +47,43 @@ const CreatePostWizard = () => {
 
   const [postContent, setPostContent] = useState('');
   const [postImage, setPostImage] = useState<File | null>();
+  const [isUploadingImg, setIsUploadingImg] = useState(false);
+  const [isCheckingForCat, setIsCheckingForCat] = useState(false);
   const [imageHasCat, setImageHasCat] = useState<string>();
-  const [base64code, setBase64code] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const ctx = api.useContext();
 
-  const { isLoading: isPosting } = api.posts.createPost.useMutation({});
-  const { mutate } = api.posts.invalidatePosts.useMutation({
-    onSuccess: () => {
-      setPostContent('');
-      setPostImage(null);
-      if (imageInputRef.current && imageInputRef.current.files) {
-        imageInputRef.current.value = null!;
-      }
-      void ctx.posts.invalidate();
-    },
-    onError: (e) => {
-      const errorMessage = e.message;
-      if (errorMessage) {
-        toast.error(errorMessage);
-      } else {
-        toast.error('Failed to post! Please try again later.');
-      }
-    },
-  });
-
-  const onImageLoad = (fileString: string) => {
-    setBase64code(fileString);
-  };
-
-  const getBase64 = (image: File) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(image);
-    reader.onload = () => {
-      onImageLoad(reader.result as string);
-    };
-  };
+  const { mutate, isLoading: isPosting } =
+    api.posts.invalidatePosts.useMutation({
+      onSuccess: () => {
+        setPostContent('');
+        setPostImage(null);
+        if (imageInputRef.current && imageInputRef.current.files) {
+          imageInputRef.current.value = null!;
+        }
+        void ctx.posts.invalidate();
+      },
+      onError: (e) => {
+        const errorMessage = e.message;
+        if (errorMessage) {
+          toast.error(errorMessage);
+        } else {
+          toast.error('Failed to post! Please try again later.');
+        }
+      },
+    });
 
   const sendPostData = () => {
     const postData = new FormData();
     postData.append('postContent', postContent);
-    postData.append('imageBase64', base64code);
+    postData.append('imageUrl', imageUrl);
     void fetch('/api/post', {
       method: 'POST',
       body: postData,
-    }).then((res) => {
-      console.log('resdas', res);
+    }).then(() => {
       mutate();
     });
   };
@@ -147,18 +136,18 @@ const CreatePostWizard = () => {
               e.preventDefault();
               if (e.target.files) {
                 setPostImage(e.target.files?.[0] as File);
-                getBase64(e.target.files?.[0] as File);
-
+                setIsUploadingImg(true);
+                setIsCheckingForCat(true);
                 const myHeaders = new Headers();
                 myHeaders.append('x-api-key', `${env.NEXT_PUBLIC_CAT_API_KEY}`);
 
-                const formData = new FormData();
-                formData.append('file', e.target.files[0] as Blob);
+                const catCheckFormData = new FormData();
+                catCheckFormData.append('file', e.target.files[0] as Blob);
 
                 const requestOptions = {
                   method: 'POST',
                   headers: myHeaders,
-                  body: formData,
+                  body: catCheckFormData,
                   redirect: 'follow',
                 };
 
@@ -167,18 +156,46 @@ const CreatePostWizard = () => {
                   requestOptions as RequestInit
                 )
                   .then((response) => response.text())
-                  .then((result) => setImageHasCat(result))
+                  .then((result) => {
+                    setIsCheckingForCat(false);
+                    setImageHasCat(result);
+                  })
                   .catch((error) => {
                     console.log('error', error);
                     setImageHasCat('approved');
                   });
+
+                const imageFormData = new FormData();
+                imageFormData.append('image', e.target.files[0] as Blob);
+                const requestOptions2 = {
+                  method: 'POST',
+                  body: imageFormData,
+                  redirect: 'follow',
+                };
+
+                fetch(
+                  `https://api.imgbb.com/1/upload?key=${env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+                  requestOptions2 as RequestInit
+                )
+                  .then((response) => response.json())
+                  .then(
+                    (result: {
+                      data: {
+                        url: string;
+                      };
+                    }) => {
+                      setIsUploadingImg(false);
+                      setImageUrl(result.data.url);
+                    }
+                  )
+                  .catch((error) => console.log('imgbb error', error));
               }
             }}
           />
         </div>
       </div>
 
-      {postImage && !isPosting && (
+      {postImage && !isPosting && !isUploadingImg && !isCheckingForCat && (
         <button
           onClick={() => {
             if (!imageHasCat?.includes('approved')) {
@@ -192,10 +209,12 @@ const CreatePostWizard = () => {
           Post
         </button>
       )}
-      {isPosting && (
-        <div className='flex items-center justify-center'>
+      {isPosting || isCheckingForCat ? (
+        <div className='flex flex-col items-center justify-center'>
           <LoadingSpinner size={20} />
         </div>
+      ) : (
+        ''
       )}
     </div>
   );
