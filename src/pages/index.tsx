@@ -13,7 +13,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 
 import { LoadingPage, LoadingSpinner } from '~/components/loading';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import toast from 'react-hot-toast';
 
@@ -213,7 +213,7 @@ const PostView = (props: PostWithUser) => {
   const { post, author } = props;
 
   return (
-    <div key={post.id} className='flex gap-5 border-b border-white  py-5 pl-5 '>
+    <div key={post.id} className='flex gap-5 border-b border-white py-5 pl-5'>
       <Image
         src={author.profileImageUrl}
         width={48}
@@ -276,14 +276,14 @@ const Home: NextPage = () => {
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className={`fixed z-10 hidden h-full items-center duration-300 bg-white md:flex md:flex-col md:w-[5%]  hover:w-[15%] ${''}`}
+        className='fixed z-10 hidden h-full items-center duration-300 bg-white md:flex md:flex-col md:w-[5%] hover:w-[15%]'
       >
         <div className='flex justify-center items-center'>
           <Image
             src='/logo.png'
             width={50}
             height={50}
-            className='rounded-full '
+            className='rounded-full'
             alt='Cat Corner Logo'
           />
           <span className='text-black ml-3' hidden={!isHovered}>
@@ -291,7 +291,7 @@ const Home: NextPage = () => {
           </span>
         </div>
 
-        <div className='absolute bottom-2 text-black '>
+        <div className='absolute bottom-2 text-black'>
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
         </div>
@@ -317,8 +317,8 @@ const Home: NextPage = () => {
         <meta name='description' content='Cat Corner by Amir Adel' />
         <link rel='icon' href='/favicon.png' />
       </Head>
-      <main className=''>
-        <div className={`relative flex h-screen w-full overflow-x-hidden `}>
+      <main>
+        <div className='relative flex h-screen w-full overflow-x-hidden'>
           <SideNavBar />
           <div className='relative flex w-full flex-col grow md:items-end'>
             <div className='duration-300 md:w-[95%]'>
