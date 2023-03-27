@@ -25,17 +25,14 @@ export default async function handlePost(
   const ctx = { currentUserId: currentUserId, prisma: prisma };
   const createPostCaller = postsRouter.createCaller(ctx);
 
-  const { postContent, imageBase64 } = await getPostData(req);
+  const { postContent, imageUrl } = await getPostData(req);
 
-  const imageURL = await uploadImage(imageBase64);
-
-  console.log('imageURL: ', imageURL);
+  const catImageUrl = await uploadImage(imageUrl);
 
   const response = await createPostCaller.createPost({
     content: postContent,
-    imageURL: imageURL,
+    imageURL: catImageUrl,
   });
 
-  console.log('response: ', response);
   res.status(200).json(response);
 }
