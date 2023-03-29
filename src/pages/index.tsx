@@ -175,7 +175,10 @@ const CreatePostWizard = () => {
                       setImageUrl(result.data.url);
                     }
                   )
-                  .catch((error) => console.log('imgbb error', error));
+                  .catch((error) => {
+                    console.log('imgbb error', error);
+                    setIsUploadingImg(false);
+                  });
               }
             }}
           />
@@ -219,29 +222,29 @@ const PostView = (props: PostWithUser) => {
         width={48}
         height={48}
         className='h-full w-12 rounded-full'
-        alt={`${author.username as string}'s profile picture`}
+        alt={`${author.username}'s profile picture`}
       />
-      <div className='flex h-full flex-col gap-3'>
-        <div className='flex items-center justify-around gap-2 '>
+      <div className='flex w-full h-full flex-col  gap-3'>
+        <div className='flex items-start gap-2'>
           <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
             <span className='font-bold'>{`${
               author.firstName ? author.firstName : ''
             } ${author.lastName ? author.lastName : ''}`}</span>
-            <span className='text-sm opacity-70 '>{`@${
-              author.username as string
-            }`}</span>
+            <span className='text-sm opacity-70 '>{`@${author.username}`}</span>
           </div>
 
           <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
         {post.content}
-        <Image
-          src={post.catImageURL}
-          alt={`${post.authorId}'s cat image`}
-          className='w-32 rounded'
-          width={128}
-          height={128}
-        />
+        <span className={`relative max-w-lg`}>
+          <Image
+            src={post.catImageUrl}
+            alt={`${post.authorId}'s cat image`}
+            className='rounded'
+            width={post.catImageWidth}
+            height={post.catImageHeight}
+          />
+        </span>
       </div>
     </div>
   );

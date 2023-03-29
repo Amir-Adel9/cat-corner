@@ -6,15 +6,16 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function uploadImage(imageUrl: string): Promise<string> {
-  ('7amada');
-  try {
-    ('7amo');
-    const imageData = await cloudinary.uploader.upload(imageUrl);
-
-    return imageData.secure_url;
-  } catch (error) {
-    ('da error');
-    return error as string;
-  }
+export async function uploadImage(imageUrl: string): Promise<{
+  secureUrl: string;
+  width: number;
+  height: number;
+}> {
+  const imageData = await cloudinary.uploader.upload(imageUrl);
+  console.log(imageData);
+  return {
+    secureUrl: imageData.secure_url,
+    width: imageData.width,
+    height: imageData.height,
+  };
 }
