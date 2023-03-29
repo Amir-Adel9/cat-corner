@@ -1,9 +1,6 @@
-const LikesIcon = (props: {
-  activeTab: string;
-  isActiveHandler: React.Dispatch<React.SetStateAction<string>>;
-}) => {
+const LikesIcon = (props: { activeTab: string }) => {
   return (
-    <span onClick={() => props.isActiveHandler('Likes')}>
+    <span>
       {props.activeTab === 'Likes' ? (
         <svg
           id='Layer_1'
