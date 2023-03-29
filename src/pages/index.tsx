@@ -78,7 +78,7 @@ const CreatePostWizard = () => {
   if (!user) return null;
 
   return (
-    <div className='flex items-start gap-5 border-b pt-10 pb-5 pl-5 w-full'>
+    <div className='flex items-start gap-5 border-b pt-10 pb-5 pl-5 w-full font-noto'>
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -92,7 +92,7 @@ const CreatePostWizard = () => {
           value={postContent}
           placeholder='Type some text...'
           disabled={isPosting}
-          className='bg-transparent outline-none'
+          className='bg-transparent outline-none font-sono'
           onChange={(e) => setPostContent(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -110,24 +110,25 @@ const CreatePostWizard = () => {
           {postImage && (
             <Image
               src={URL.createObjectURL(postImage as Blob)}
-              alt=''
+              className='rounded'
+              alt='preview image'
               width={300}
               height={200}
             />
           )}
         </div>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center  '>
+        <div className='flex items-center justify-start xs:justify-between'>
+          <div className='flex items-center'>
             <label htmlFor='image-input'>
               <div className='flex cursor-pointer gap-1 p-1 rounded duration-200 hover:scale-105 hover:bg-[#222]'>
                 <ImageIcon />
-                <span>Upload Image</span>
+                <span className='hidden xs:inline'>Upload Image</span>
               </div>
             </label>
             <input
               type='file'
               ref={imageInputRef}
-              className='hidden '
+              className='hidden'
               id='image-input'
               hidden={!postImage}
               onChange={(e) => {
@@ -198,9 +199,11 @@ const CreatePostWizard = () => {
             />
           </div>
           <div className='flex '>
-            {!isPosting && !isUploadingImg && !isCheckingForCat && (
+            {isUploadingImg || isCheckingForCat ? (
+              <span>Uploading your image...</span>
+            ) : (
               <button
-                className='disabled:bg-slate-200 bg-slate-100 py-1 px-2 mx-2 rounded-sm text-black'
+                className='bg-slate-100 text-black mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
                 disabled={!postImage}
                 onClick={() => {
                   if (!imageHasCat?.includes('approved')) {
@@ -214,8 +217,8 @@ const CreatePostWizard = () => {
                 Post
               </button>
             )}
-            {isPosting || isCheckingForCat || true ? (
-              <div className='flex flex-col items-center justify-center'>
+            {isPosting || isCheckingForCat || isUploadingImg ? (
+              <div className='flex flex-col items-center justify-center mx-2'>
                 <LoadingSpinner size={20} />
               </div>
             ) : (
@@ -242,18 +245,19 @@ const PostView = (props: PostWithUser) => {
         className='h-full w-12 rounded-full'
         alt={`${author.username}'s profile picture`}
       />
-      <div className='flex w-full h-full flex-col  gap-3'>
+      <div className='flex w-full h-full flex-col gap-3 font-noto'>
         <div className='flex items-start gap-2'>
           <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
-            <span className='font-bold'>{`${
+            <span className='font-bold '>{`${
               author.firstName ? author.firstName : ''
             } ${author.lastName ? author.lastName : ''}`}</span>
-            <span className='text-sm opacity-70 '>{`@${author.username}`}</span>
+            <span className='text-sm opacity-70 font-sans'>{`@${author.username}`}</span>
           </div>
 
           <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
-        {post.content}
+        <span className='font-sans'>{post.content}</span>
+
         <span className={`relative max-w-lg`}>
           <Image
             src={post.catImageUrl}
