@@ -20,6 +20,11 @@ import toast from 'react-hot-toast';
 import ImageIcon from '~/components/svgs/image';
 
 import { env } from '../env.mjs';
+import HomeIcon from '~/components/svgs/home';
+import ProfileIcon from '~/components/svgs/profile';
+import LikesIcon from '~/components/svgs/likes';
+import InfoIcon from '~/components/svgs/info';
+import ThemeIcon from '~/components/svgs/theme';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -78,7 +83,7 @@ const CreatePostWizard = () => {
   if (!user) return null;
 
   return (
-    <div className='flex items-start gap-5 border-b pt-10 pb-5 pl-5 w-full'>
+    <div className='flex items-start gap-5 border-b pt-10 pb-5 pl-5 w-full font-noto'>
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -92,7 +97,7 @@ const CreatePostWizard = () => {
           value={postContent}
           placeholder='Type some text...'
           disabled={isPosting}
-          className='bg-transparent outline-none'
+          className='bg-transparent outline-none font-sono'
           onChange={(e) => setPostContent(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
@@ -110,24 +115,25 @@ const CreatePostWizard = () => {
           {postImage && (
             <Image
               src={URL.createObjectURL(postImage as Blob)}
-              alt=''
+              className='rounded'
+              alt='preview image'
               width={300}
               height={200}
             />
           )}
         </div>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center  '>
+        <div className='flex items-center justify-start xs:justify-between'>
+          <div className='flex items-center'>
             <label htmlFor='image-input'>
               <div className='flex cursor-pointer gap-1 p-1 rounded duration-200 hover:scale-105 hover:bg-[#222]'>
                 <ImageIcon />
-                <span>Upload Image</span>
+                <span className='hidden xs:inline'>Upload Image</span>
               </div>
             </label>
             <input
               type='file'
               ref={imageInputRef}
-              className='hidden '
+              className='hidden'
               id='image-input'
               hidden={!postImage}
               onChange={(e) => {
@@ -198,9 +204,11 @@ const CreatePostWizard = () => {
             />
           </div>
           <div className='flex '>
-            {!isPosting && !isUploadingImg && !isCheckingForCat && (
+            {isUploadingImg || isCheckingForCat ? (
+              <span>Uploading your image...</span>
+            ) : (
               <button
-                className='disabled:bg-slate-200 bg-slate-100 py-1 px-2 mx-2 rounded-sm text-black'
+                className='bg-slate-100 text-black mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
                 disabled={!postImage}
                 onClick={() => {
                   if (!imageHasCat?.includes('approved')) {
@@ -214,8 +222,8 @@ const CreatePostWizard = () => {
                 Post
               </button>
             )}
-            {isPosting || isCheckingForCat || true ? (
-              <div className='flex flex-col items-center justify-center'>
+            {isPosting || isCheckingForCat || isUploadingImg ? (
+              <div className='flex flex-col items-center justify-center mx-2'>
                 <LoadingSpinner size={20} />
               </div>
             ) : (
@@ -242,18 +250,19 @@ const PostView = (props: PostWithUser) => {
         className='h-full w-12 rounded-full'
         alt={`${author.username}'s profile picture`}
       />
-      <div className='flex w-full h-full flex-col  gap-3'>
+      <div className='flex w-full h-full flex-col gap-3 font-noto'>
         <div className='flex items-start gap-2'>
           <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
-            <span className='font-bold'>{`${
+            <span className='font-bold '>{`${
               author.firstName ? author.firstName : ''
             } ${author.lastName ? author.lastName : ''}`}</span>
-            <span className='text-sm opacity-70 '>{`@${author.username}`}</span>
+            <span className='text-sm opacity-70 font-sans'>{`@${author.username}`}</span>
           </div>
 
           <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
-        {post.content}
+        <span className='font-sans'>{post.content}</span>
+
         <span className={`relative max-w-lg`}>
           <Image
             src={post.catImageUrl}
@@ -293,13 +302,14 @@ const Home: NextPage = () => {
 
   const SideNavBar = () => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isActive, setIsActive] = useState('Home');
     return (
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className='fixed z-10 hidden h-full items-center duration-300 bg-white md:flex md:flex-col md:w-[5%] hover:w-[15%]'
+        className='fixed z-10 hidden h-full font-noto items-center group hover:items-start  duration-300 bg-white md:flex md:flex-col md:w-[5%] hover:w-[15%] text-black'
       >
-        <div className='flex justify-center items-center'>
+        <div className='flex justify-center items-center group-hover:pl-5'>
           <Image
             src='/logo.png'
             width={50}
@@ -307,11 +317,41 @@ const Home: NextPage = () => {
             className='rounded-full'
             alt='Cat Corner Logo'
           />
-          <span className='text-black ml-3' hidden={!isHovered}>
+          <span className='ml-1' hidden={!isHovered}>
             Cat Corner
           </span>
         </div>
+        <div className='w-full h-1/2 flex flex-col duration-200 items-center justify-evenly group-hover:items-start group-hover:pl-5 b-red-500'>
+          <div className='flex items-center'>
+            <HomeIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Home
+            </span>
+          </div>
 
+          <div className='flex items-center group-hover:-translate-x-2'>
+            <ProfileIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span hidden={!isHovered}>Profile</span>
+          </div>
+          <div className='flex items-center'>
+            <LikesIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Likes
+            </span>
+          </div>
+          <div className='flex items-center'>
+            <ThemeIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Theme
+            </span>
+          </div>
+          <div className='flex items-center'>
+            <InfoIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Info
+            </span>
+          </div>
+        </div>
         <div className='absolute bottom-2 text-black'>
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
