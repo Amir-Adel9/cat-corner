@@ -48,7 +48,7 @@ export const postsRouter = createTRPCRouter({
     return posts.map((post) => {
       const author = users.find((user) => user.id === post.authorId);
 
-      if (!author)
+      if (!author || !author.username)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Author for post not found',
@@ -78,13 +78,15 @@ export const postsRouter = createTRPCRouter({
 
       if (!success) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
 
-      const catImageUrl = await uploadImage(input.imageUrl);
+      const imageData = await uploadImage(input.imageUrl);
 
       const post = await ctx.prisma.post.create({
         data: {
           authorId,
           content: input.content ? input.content : '',
-          catImageURL: catImageUrl,
+          catImageUrl: imageData.secureUrl,
+          catImageWidth: imageData.width,
+          catImageHeight: imageData.height,
         },
       });
 

@@ -16,7 +16,10 @@ model Post {
     createdAt DateTime @default(now())
 
     content String? @db.VarChar(255)
-    catImageURL String
+
+    catImageUrl String @default("")
+    catImageWidth Int @default(0)
+    catImageHeight Int @default(0)
 
     authorId String
     
