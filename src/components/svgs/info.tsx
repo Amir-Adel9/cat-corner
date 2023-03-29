@@ -1,9 +1,6 @@
-const InfoIcon = (props: {
-  activeTab: string;
-  isActiveHandler: React.Dispatch<React.SetStateAction<string>>;
-}) => {
+const InfoIcon = (props: { activeTab: string }) => {
   return (
-    <span onClick={() => props.isActiveHandler('Info')}>
+    <span>
       {props.activeTab === 'Info' ? (
         <svg
           fill='#000000'

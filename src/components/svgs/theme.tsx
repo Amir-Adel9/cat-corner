@@ -1,9 +1,6 @@
-const ThemeIcon = (props: {
-  activeTab: string;
-  isActiveHandler: React.Dispatch<React.SetStateAction<string>>;
-}) => {
+const ThemeIcon = (props: { activeTab: string }) => {
   return (
-    <span onClick={() => props.isActiveHandler('Theme')}>
+    <span>
       {props.activeTab === 'Theme' ? (
         <svg
           xmlns='http://www.w3.org/2000/svg'

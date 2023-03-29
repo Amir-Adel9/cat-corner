@@ -1,9 +1,6 @@
-const HomeIcon = (props: {
-  activeTab: string;
-  isActiveHandler: React.Dispatch<React.SetStateAction<string>>;
-}) => {
+const HomeIcon = (props: { activeTab: string }) => {
   return (
-    <span onClick={() => props.isActiveHandler('Home')}>
+    <span>
       {props.activeTab === 'Home' ? (
         <svg
           width='32px'

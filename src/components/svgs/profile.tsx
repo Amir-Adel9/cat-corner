@@ -1,9 +1,6 @@
-const ProfileIcon = (props: {
-  activeTab: string;
-  isActiveHandler: React.Dispatch<React.SetStateAction<string>>;
-}) => {
+const ProfileIcon = (props: { activeTab: string }) => {
   return (
-    <span onClick={() => props.isActiveHandler('Profile')}>
+    <span>
       {props.activeTab === 'Profile' ? (
         <svg
           width='42px'

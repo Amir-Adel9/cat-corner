@@ -295,6 +295,7 @@ const Feed = () => {
 
 const Home: NextPage = () => {
   const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const [isActive, setIsActive] = useState('Home');
 
   api.posts.getAll.useQuery();
 
@@ -302,7 +303,6 @@ const Home: NextPage = () => {
 
   const SideNavBar = () => {
     const [isHovered, setIsHovered] = useState(false);
-    const [isActive, setIsActive] = useState('Home');
     return (
       <div
         onMouseEnter={() => setIsHovered(true)}
@@ -322,31 +322,46 @@ const Home: NextPage = () => {
           </span>
         </div>
         <div className='w-full h-1/2 flex flex-col duration-200 items-center justify-evenly group-hover:items-start group-hover:pl-5 b-red-500'>
-          <div className='flex items-center'>
-            <HomeIcon activeTab={isActive} isActiveHandler={setIsActive} />
+          <div
+            onClick={() => setIsActive('Home')}
+            className='flex items-center'
+          >
+            <HomeIcon activeTab={isActive} />
             <span className='ml-1' hidden={!isHovered}>
               Home
             </span>
           </div>
 
-          <div className='flex items-center group-hover:-translate-x-2'>
-            <ProfileIcon activeTab={isActive} isActiveHandler={setIsActive} />
+          <div
+            onClick={() => setIsActive('Profile')}
+            className='flex items-center group-hover:-translate-x-2'
+          >
+            <ProfileIcon activeTab={isActive} />
             <span hidden={!isHovered}>Profile</span>
           </div>
-          <div className='flex items-center'>
-            <LikesIcon activeTab={isActive} isActiveHandler={setIsActive} />
+          <div
+            onClick={() => setIsActive('Likes')}
+            className='flex items-center'
+          >
+            <LikesIcon activeTab={isActive} />
             <span className='ml-1' hidden={!isHovered}>
               Likes
             </span>
           </div>
-          <div className='flex items-center'>
-            <ThemeIcon activeTab={isActive} isActiveHandler={setIsActive} />
+          <div
+            onClick={() => setIsActive('Theme')}
+            className='flex items-center'
+          >
+            <ThemeIcon activeTab={isActive} />
             <span className='ml-1' hidden={!isHovered}>
               Theme
             </span>
           </div>
-          <div className='flex items-center'>
-            <InfoIcon activeTab={isActive} isActiveHandler={setIsActive} />
+          <div
+            onClick={() => setIsActive('Info')}
+            className='flex items-center'
+          >
+            <InfoIcon activeTab={isActive} />
             <span className='ml-1' hidden={!isHovered}>
               Info
             </span>
@@ -363,7 +378,23 @@ const Home: NextPage = () => {
   const BottomNavBar = () => {
     return (
       <div className='fixed bottom-0 flex h-[7%] w-full items-center justify-center border-t bg-black md:hidden'>
-        <div className=' '>
+        <div className=' flex'>
+          <div className='flex items-center fill-white'>
+            <HomeIcon activeTab={isActive} />
+          </div>
+
+          <div className='flex items-center group-hover:-translate-x-2'>
+            <ProfileIcon activeTab={isActive} />
+          </div>
+          <div className='flex items-center'>
+            <LikesIcon activeTab={isActive} />
+          </div>
+          <div className='flex items-center'>
+            <ThemeIcon activeTab={isActive} />
+          </div>
+          <div className='flex items-center'>
+            <InfoIcon activeTab={isActive} />
+          </div>
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
         </div>
