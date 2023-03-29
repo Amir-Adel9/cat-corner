@@ -20,6 +20,11 @@ import toast from 'react-hot-toast';
 import ImageIcon from '~/components/svgs/image';
 
 import { env } from '../env.mjs';
+import HomeIcon from '~/components/svgs/home';
+import ProfileIcon from '~/components/svgs/profile';
+import LikesIcon from '~/components/svgs/likes';
+import InfoIcon from '~/components/svgs/info';
+import ThemeIcon from '~/components/svgs/theme';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -297,13 +302,14 @@ const Home: NextPage = () => {
 
   const SideNavBar = () => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isActive, setIsActive] = useState('Home');
     return (
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className='fixed z-10 hidden h-full items-center duration-300 bg-white md:flex md:flex-col md:w-[5%] hover:w-[15%]'
+        className='fixed z-10 hidden h-full font-noto items-center group hover:items-start  duration-300 bg-white md:flex md:flex-col md:w-[5%] hover:w-[15%] text-black'
       >
-        <div className='flex justify-center items-center'>
+        <div className='flex justify-center items-center group-hover:pl-5'>
           <Image
             src='/logo.png'
             width={50}
@@ -311,11 +317,41 @@ const Home: NextPage = () => {
             className='rounded-full'
             alt='Cat Corner Logo'
           />
-          <span className='text-black ml-3' hidden={!isHovered}>
+          <span className='ml-1' hidden={!isHovered}>
             Cat Corner
           </span>
         </div>
+        <div className='w-full h-1/2 flex flex-col duration-200 items-center justify-evenly group-hover:items-start group-hover:pl-5 b-red-500'>
+          <div className='flex items-center'>
+            <HomeIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Home
+            </span>
+          </div>
 
+          <div className='flex items-center group-hover:-translate-x-2'>
+            <ProfileIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span hidden={!isHovered}>Profile</span>
+          </div>
+          <div className='flex items-center'>
+            <LikesIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Likes
+            </span>
+          </div>
+          <div className='flex items-center'>
+            <ThemeIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Theme
+            </span>
+          </div>
+          <div className='flex items-center'>
+            <InfoIcon activeTab={isActive} isActiveHandler={setIsActive} />
+            <span className='ml-1' hidden={!isHovered}>
+              Info
+            </span>
+          </div>
+        </div>
         <div className='absolute bottom-2 text-black'>
           {!isSignedIn && <SignInButton />}
           {!!isSignedIn && <SignOutButton />}
