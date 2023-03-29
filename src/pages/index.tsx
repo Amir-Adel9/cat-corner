@@ -78,7 +78,7 @@ const CreatePostWizard = () => {
   if (!user) return null;
 
   return (
-    <div className='flex items-start gap-5 border-b p-16 pl-5 pb-0 w-full'>
+    <div className='flex items-start gap-5 border-b pt-10 pb-5 pl-5 w-full'>
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -86,7 +86,7 @@ const CreatePostWizard = () => {
         className='rounded-full'
         alt={`${user.username!}'s profile picture`}
       />
-      <div className='relative flex grow flex-col justify-center pb-14 last:mt-auto'>
+      <div className='relative flex grow flex-col justify-center '>
         <input
           type='text'
           value={postContent}
@@ -106,106 +106,124 @@ const CreatePostWizard = () => {
             }
           }}
         />
-        <div className='absolute bottom-4 flex items-center gap-2'>
-          <label htmlFor='image-input'>
-            <div className='flex cursor-pointer gap-1 rounded p-1 duration-200 hover:scale-105 hover:bg-[#222]'>
-              <ImageIcon />
-              <span>Upload Image</span>
-            </div>
-          </label>
-          <input
-            type='file'
-            ref={imageInputRef}
-            className='file:hidden'
-            id='image-input'
-            hidden={!postImage}
-            onChange={(e) => {
-              e.preventDefault();
-              if (e.target.files) {
-                setPostImage(e.target.files?.[0] as File);
-                setIsUploadingImg(true);
-                setIsCheckingForCat(true);
-                const myHeaders = new Headers();
-                myHeaders.append('x-api-key', `${env.NEXT_PUBLIC_CAT_API_KEY}`);
+        <div className='my-2'>
+          {postImage && (
+            <Image
+              src={URL.createObjectURL(postImage as Blob)}
+              alt=''
+              width={300}
+              height={200}
+            />
+          )}
+        </div>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center  '>
+            <label htmlFor='image-input'>
+              <div className='flex cursor-pointer gap-1 p-1 rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+                <ImageIcon />
+                <span>Upload Image</span>
+              </div>
+            </label>
+            <input
+              type='file'
+              ref={imageInputRef}
+              className='hidden '
+              id='image-input'
+              hidden={!postImage}
+              onChange={(e) => {
+                e.preventDefault();
+                if (e.target.files) {
+                  setPostImage(e.target.files?.[0] as File);
+                  setIsUploadingImg(true);
+                  setIsCheckingForCat(true);
+                  const myHeaders = new Headers();
+                  myHeaders.append(
+                    'x-api-key',
+                    `${env.NEXT_PUBLIC_CAT_API_KEY}`
+                  );
 
-                const catCheckFormData = new FormData();
-                catCheckFormData.append('file', e.target.files[0] as Blob);
+                  const catCheckFormData = new FormData();
+                  catCheckFormData.append('file', e.target.files[0] as Blob);
 
-                const requestOptions = {
-                  method: 'POST',
-                  headers: myHeaders,
-                  body: catCheckFormData,
-                  redirect: 'follow',
-                };
+                  const requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: catCheckFormData,
+                    redirect: 'follow',
+                  };
 
-                fetch(
-                  'https://api.thecatapi.com/v1/images/upload',
-                  requestOptions as RequestInit
-                )
-                  .then((response) => response.text())
-                  .then((result) => {
-                    setIsCheckingForCat(false);
-                    setImageHasCat(result);
-                  })
-                  .catch((error) => {
-                    console.log('error', error);
-                    setIsCheckingForCat(false);
-                  });
-
-                const imageFormData = new FormData();
-                imageFormData.append('image', e.target.files[0] as Blob);
-                const requestOptions2 = {
-                  method: 'POST',
-                  body: imageFormData,
-                  redirect: 'follow',
-                };
-
-                fetch(
-                  `https://api.imgbb.com/1/upload?key=${env.NEXT_PUBLIC_IMGBB_API_KEY}`,
-                  requestOptions2 as RequestInit
-                )
-                  .then((response) => response.json())
-                  .then(
-                    (result: {
-                      data: {
-                        url: string;
-                      };
-                    }) => {
-                      setIsUploadingImg(false);
-                      setImageUrl(result.data.url);
-                    }
+                  fetch(
+                    'https://api.thecatapi.com/v1/images/upload',
+                    requestOptions as RequestInit
                   )
-                  .catch((error) => {
-                    console.log('imgbb error', error);
-                    setIsUploadingImg(false);
-                  });
-              }
-            }}
-          />
+                    .then((response) => response.text())
+                    .then((result) => {
+                      setIsCheckingForCat(false);
+                      setImageHasCat(result);
+                    })
+                    .catch((error) => {
+                      console.log('error', error);
+                      setIsCheckingForCat(false);
+                    });
+
+                  const imageFormData = new FormData();
+                  imageFormData.append('image', e.target.files[0] as Blob);
+                  const requestOptions2 = {
+                    method: 'POST',
+                    body: imageFormData,
+                    redirect: 'follow',
+                  };
+
+                  fetch(
+                    `https://api.imgbb.com/1/upload?key=${env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+                    requestOptions2 as RequestInit
+                  )
+                    .then((response) => response.json())
+                    .then(
+                      (result: {
+                        data: {
+                          url: string;
+                        };
+                      }) => {
+                        setIsUploadingImg(false);
+                        setImageUrl(result.data.url);
+                      }
+                    )
+                    .catch((error) => {
+                      console.log('imgbb error', error);
+                      setIsUploadingImg(false);
+                    });
+                }
+              }}
+            />
+          </div>
+          <div className='flex '>
+            {!isPosting && !isUploadingImg && !isCheckingForCat && (
+              <button
+                className='disabled:bg-slate-200 bg-slate-100 py-1 px-2 mx-2 rounded-sm text-black'
+                disabled={!postImage}
+                onClick={() => {
+                  if (!imageHasCat?.includes('approved')) {
+                    toast.error('Image does not have a cat');
+                    return;
+                  } else {
+                    mutate({ content: postContent, imageUrl: imageUrl });
+                  }
+                }}
+              >
+                Post
+              </button>
+            )}
+            {isPosting || isCheckingForCat || true ? (
+              <div className='flex flex-col items-center justify-center'>
+                <LoadingSpinner size={20} />
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
         </div>
       </div>
-
-      {postImage && !isPosting && !isUploadingImg && !isCheckingForCat && (
-        <button
-          onClick={() => {
-            if (!imageHasCat?.includes('approved')) {
-              toast.error('Image does not have a cat');
-              return;
-            } else {
-              mutate({ content: postContent, imageUrl: imageUrl });
-            }
-          }}
-        >
-          Post
-        </button>
-      )}
-      {isPosting || isCheckingForCat ? (
-        <div className='flex flex-col items-center justify-center'>
-          <LoadingSpinner size={20} />
-        </div>
-      ) : (
-        ''
-      )}
     </div>
   );
 };
