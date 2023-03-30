@@ -12,7 +12,6 @@ export async function uploadImage(imageUrl: string): Promise<{
   height: number;
 }> {
   const imageData = await cloudinary.uploader.upload(imageUrl);
-  console.log(imageData);
   return {
     secureUrl: imageData.secure_url,
     width: imageData.width,
