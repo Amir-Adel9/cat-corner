@@ -127,8 +127,8 @@ export const postsRouter = createTRPCRouter({
   addComment: privateProcedure
     .input(
       z.object({
-        content: z.string().optional(),
-        imageUrl: z.string().url().optional(),
+        content: z.string(),
+        imageUrl: z.string().optional(),
         postId: z.string(),
       })
     )

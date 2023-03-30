@@ -64,6 +64,7 @@ const CreatePostWizard = () => {
   const { mutate, isLoading: isPosting } = api.posts.createPost.useMutation({
     onSuccess: () => {
       setPostContent('');
+      setImageHasCat('');
       setPostImage(null);
       if (imageInputRef.current && imageInputRef.current.files) {
         imageInputRef.current.value = null!;
@@ -123,19 +124,34 @@ const CreatePostWizard = () => {
           )}
         </div>
         <div className='flex items-center justify-start xs:justify-between'>
-          <div className='flex items-center'>
+          <div className='flex items-center gap-5'>
             <label htmlFor='image-input'>
-              <div className='flex cursor-pointer gap-1 p-1 rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+              <div className='flex items-center gap-1 p-1 cursor-pointer rounded duration-200 hover:scale-105 hover:bg-[#222]'>
                 <ImageIcon />
-                <span className='hidden xs:inline'>Upload Image</span>
+                <div className='hidden xs:inline'>Upload Image</div>
               </div>
             </label>
+            <div>
+              {isCheckingForCat ? (
+                <div className='flex items-center gap-2'>
+                  <LoadingSpinner size={18} />
+                  <div>Applying catto check...</div>{' '}
+                </div>
+              ) : imageHasCat?.includes('approved') ? (
+                <div>Catto status: catto check complete </div>
+              ) : imageHasCat?.includes('failed') ? (
+                <div>Catto status: no catto is found {`:(`} </div>
+              ) : (
+                <div>- your post must include an image of a cat -</div>
+              )}
+            </div>
             <input
               type='file'
               ref={imageInputRef}
               className='hidden'
               id='image-input'
               hidden={!postImage}
+              accept='image/png, image/jpg, image/jpeg'
               onChange={(e) => {
                 e.preventDefault();
                 if (e.target.files) {
@@ -245,12 +261,24 @@ const PostView = (props: PostWithUser) => {
 
   const ctx = api.useContext();
 
+  const [commentContent, setCommentContent] = useState('');
+  const [commentImageUrl, setCommentImageUrl] = useState('');
+
+  const commentInputRef = useRef<HTMLInputElement>(null);
+
   if (!user) return <div></div>;
 
-  const { mutate: addComment } = api.posts.addComment.useMutation({});
+  const { mutate: addComment } = api.posts.addComment.useMutation({
+    onSuccess: () => {
+      void ctx.posts.invalidate();
+      setCommentContent('');
+      setCommentImageUrl('');
+    },
+  });
   const { mutate: likePost } = api.posts.likePost.useMutation({
     onSuccess: () => {
       void ctx.posts.invalidate();
+      if (commentInputRef.current) commentInputRef.current.value = '';
     },
   });
 
@@ -265,18 +293,17 @@ const PostView = (props: PostWithUser) => {
       />
       <div className='flex w-full h-full flex-col gap-3 font-noto'>
         <div className='flex items-start gap-2'>
-          <div className='flex flex-col items-center xs:flex-row xs:gap-2'>
-            <span className='font-bold '>{`${
+          <div className='flex items-center xs:flex-row xs:gap-2'>
+            <span className='font-bold'>{`${
               author.firstName ? author.firstName : ''
             } ${author.lastName ? author.lastName : ''}`}</span>
             <span className='text-sm opacity-70 font-sans'>{`@${author.username}`}</span>
           </div>
-
           <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
         <span className='font-sans'>{post.content}</span>
         <div
-          className={`relative max-w-lg`}
+          className={`relative flex flex-col gap-2 max-w-lg`}
           style={{ width: `${post.imageWidth}px` }}
         >
           <Image
@@ -286,12 +313,12 @@ const PostView = (props: PostWithUser) => {
             width={post.imageWidth}
             height={post.imageHeight}
           />
-          <div className='flex justify-around'>
+          <div className='flex justify-around hidden'>
             <div
               onClick={() => {
                 likePost({ postId: post.id, userId: user?.id });
               }}
-              className='flex'
+              className='flex bg-slate-100 text-black mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
             >
               <span>
                 <LikesIcon activeTab='Likes' />
@@ -302,19 +329,46 @@ const PostView = (props: PostWithUser) => {
               <span>X </span> <span>Comment</span>
             </div>
           </div>
-          <div>
-            <input
-              type='text'
-              className='text-black'
-              id='image-input'
-              hidden={!true}
+          <div hidden={true}>
+            {post.comments.map((comment) => {
+              return <div key={comment.id}>{comment.content}</div>;
+            })}
+          </div>
+          <div className='flex items-center gap-4 hidden'>
+            <Image
+              src={user.profileImageUrl}
+              width={48}
+              height={48}
+              className='h-full w-12 rounded-full'
+              alt={`${user.username!}'s profile picture`}
             />
-            <label htmlFor='image-input'>
-              <div className='flex cursor-pointer gap-1 p-1 rounded duration-200 hover:scale-105 hover:bg-[#222]'>
-                <ImageIcon />
-                <span className='hidden xs:inline'>Upload Image</span>
-              </div>
-            </label>
+            <div>
+              <input
+                type='text'
+                onChange={(e) => setCommentContent(e.target.value)}
+                placeholder='Add a comment...'
+                className='bg-transparent outline-none'
+                id='image-input'
+              />
+              <label htmlFor='image-input'>
+                <div className='flex cursor-pointer gap-1 text-sm w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+                  <ImageIcon />
+                  <span className='hidden xs:inline'>Upload Image</span>
+                </div>
+              </label>
+            </div>
+            <button
+              onClick={() => {
+                addComment({
+                  postId: post.id,
+                  content: commentContent,
+                  imageUrl: commentImageUrl,
+                });
+              }}
+              className='bg-slate-100 text-black mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
+            >
+              Comment
+            </button>
           </div>
         </div>
       </div>
