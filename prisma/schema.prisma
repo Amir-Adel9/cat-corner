@@ -17,11 +17,37 @@ model Post {
 
     content String? @db.VarChar(255)
 
-    catImageUrl String @default("")
-    catImageWidth Int @default(0)
-    catImageHeight Int @default(0)
+    imageUrl String @default("")
+    imageWidth Int @default(0)
+    imageHeight Int @default(0)
+
+    likes Int @default(0)
+    comments Comment[]
 
     authorId String
     
     @@index([authorId])
+    
+}
+
+model Comment {
+id        String   @id @default(cuid())
+createdAt DateTime @default(now())
+
+content String @db.VarChar(255)
+
+imageUrl String? @default("")
+imageWidth Int? @default(0)
+imageHeight Int? @default(0)
+
+likes Int @default(0)
+
+authorId String 
+
+post Post @relation(fields: [postId], references: [id] )
+
+postId String 
+
+@@index([postId])
+
 }

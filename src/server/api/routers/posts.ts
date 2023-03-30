@@ -35,6 +35,17 @@ export const postsRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts = await ctx.prisma.post.findMany({
       take: 100,
+      select: {
+        id: true,
+        authorId: true,
+        content: true,
+        imageUrl: true,
+        imageWidth: true,
+        imageHeight: true,
+        likes: true,
+        comments: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -47,7 +58,6 @@ export const postsRouter = createTRPCRouter({
 
     return posts.map((post) => {
       const author = users.find((user) => user.id === post.authorId);
-
       if (!author || !author.username)
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -84,12 +94,66 @@ export const postsRouter = createTRPCRouter({
         data: {
           authorId,
           content: input.content ? input.content : '',
-          catImageUrl: imageData.secureUrl,
-          catImageWidth: imageData.width,
-          catImageHeight: imageData.height,
+          imageUrl: imageData.secureUrl,
+          imageWidth: imageData.width,
+          imageHeight: imageData.height,
         },
       });
 
       return post;
+    }),
+
+  likePost: privateProcedure
+    .input(z.object({ postId: z.string(), userId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.currentUserId;
+
+      const { success } = await ratelimit.limit(authorId);
+
+      if (!success) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
+
+      await ctx.prisma.post.update({
+        where: {
+          id: input.postId,
+        },
+        data: {
+          likes: {
+            increment: 1,
+          },
+        },
+      });
+    }),
+
+  addComment: privateProcedure
+    .input(
+      z.object({
+        content: z.string().optional(),
+        imageUrl: z.string().url().optional(),
+        postId: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const authorId = ctx.currentUserId;
+
+      const { success } = await ratelimit.limit(authorId);
+
+      if (!success) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
+      let imageData;
+      if (input.imageUrl) {
+        imageData = await uploadImage(input.imageUrl);
+      }
+
+      const comment = await ctx.prisma.comment.create({
+        data: {
+          authorId,
+          content: input.content ? input.content : '',
+          imageUrl: imageData?.secureUrl,
+          imageWidth: imageData?.width,
+          postId: input.postId,
+          imageHeight: imageData?.height,
+        },
+      });
+
+      return comment;
     }),
 });
