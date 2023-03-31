@@ -25,6 +25,8 @@ import ProfileIcon from '~/components/svgs/profile';
 import LikesIcon from '~/components/svgs/likes';
 import InfoIcon from '~/components/svgs/info';
 import ThemeIcon from '~/components/svgs/theme';
+import LikeInterface from '~/components/like';
+import CommentInterface from '~/components/comment';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -84,7 +86,7 @@ const CreatePostWizard = () => {
   if (!user) return null;
 
   return (
-    <div className='flex items-start gap-5 border-b pt-10 pb-5 pl-5 w-full font-noto'>
+    <div className='flex items-start gap-2 sm:gap-5 border-b pt-10 pb-5 pl-5 w-full font-noto'>
       <Image
         src={user.profileImageUrl}
         width={50}
@@ -92,7 +94,7 @@ const CreatePostWizard = () => {
         className='rounded-full'
         alt={`${user.username!}'s profile picture`}
       />
-      <div className='relative flex grow flex-col justify-center '>
+      <div className='relative flex text-sm sm:text-base grow flex-col justify-center'>
         <input
           type='text'
           value={postContent}
@@ -124,7 +126,7 @@ const CreatePostWizard = () => {
           )}
         </div>
         <div className='flex items-center justify-start xs:justify-between'>
-          <div className='flex items-center gap-5'>
+          <div className='flex items-center gap- sm:gap-5'>
             <label htmlFor='image-input'>
               <div className='flex items-center gap-1 p-1 cursor-pointer rounded duration-200 hover:scale-105 hover:bg-[#222]'>
                 <ImageIcon />
@@ -135,7 +137,7 @@ const CreatePostWizard = () => {
               {isCheckingForCat ? (
                 <div className='flex items-center gap-2'>
                   <LoadingSpinner size={18} />
-                  <div>Applying catto check...</div>{' '}
+                  <div>Applying catto check...</div>
                 </div>
               ) : imageHasCat?.includes('approved') ? (
                 <div>Catto status: catto check complete </div>
@@ -261,6 +263,9 @@ const PostView = (props: PostWithUser) => {
 
   const ctx = api.useContext();
 
+  const [postLikes, setPostLikes] = useState(post.likes);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isCommenting, setIsCommenting] = useState(false);
   const [commentContent, setCommentContent] = useState('');
   const [commentImageUrl, setCommentImageUrl] = useState('');
 
@@ -283,27 +288,37 @@ const PostView = (props: PostWithUser) => {
   });
 
   return (
-    <div key={post.id} className='flex gap-5 border-b border-white py-5 pl-5'>
+    <div
+      key={post.id}
+      className='flex sm:gap-5 border-b border-white py-5 sm:pl-5'
+    >
       <Image
         src={author.profileImageUrl}
         width={48}
         height={48}
-        className='h-full w-12 rounded-full'
+        className='h-full w-12 rounded-full hidden sm:inline'
         alt={`${author.username}'s profile picture`}
       />
-      <div className='flex w-full h-full flex-col gap-3 font-noto'>
-        <div className='flex items-start gap-2'>
+      <div className='flex w-full h-full bg-red-40 items-center sm:items-start flex-col gap-3 font-noto'>
+        <div className='flex  w-full sm:m-0'>
           <div className='flex items-center xs:flex-row xs:gap-2'>
+            <Image
+              src={author.profileImageUrl}
+              width={48}
+              height={48}
+              className='h-full w-12 rounded-full inline sm:hidden'
+              alt={`${author.username}'s profile picture`}
+            />
             <span className='font-bold'>{`${
               author.firstName ? author.firstName : ''
             } ${author.lastName ? author.lastName : ''}`}</span>
             <span className='text-sm opacity-70 font-sans'>{`@${author.username}`}</span>
+            <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
           </div>
-          <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
         </div>
         <span className='font-sans'>{post.content}</span>
         <div
-          className={`relative flex flex-col gap-2 max-w-lg`}
+          className={`relative  flex flex-col gap-2 max-w-xs sm:max-w-lg`}
           style={{ width: `${post.imageWidth}px` }}
         >
           <Image
@@ -313,20 +328,31 @@ const PostView = (props: PostWithUser) => {
             width={post.imageWidth}
             height={post.imageHeight}
           />
-          <div className='flex justify-around hidden'>
+          <div className='flex justify-around '>
             <div
               onClick={() => {
-                likePost({ postId: post.id, userId: user?.id });
+                setIsLiked(!isLiked);
+                if (!isLiked) {
+                  setPostLikes(postLikes + 1);
+                  likePost({
+                    postId: post.id,
+                    userId: user?.id,
+                    isLiked: isLiked,
+                  });
+                } else {
+                  setPostLikes(postLikes - 1);
+                  likePost({
+                    postId: post.id,
+                    userId: user?.id,
+                    isLiked: isLiked,
+                  });
+                }
               }}
-              className='flex bg-slate-100 text-black mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
             >
-              <span>
-                <LikesIcon activeTab='Likes' />
-              </span>
-              <span>{post.likes} Like</span>
+              <LikeInterface likes={postLikes} isLiked={isLiked} />
             </div>
-            <div className='flex'>
-              <span>X </span> <span>Comment</span>
+            <div onClick={() => setIsCommenting(!isCommenting)}>
+              <CommentInterface postComments={post.comments.length} />
             </div>
           </div>
           <div hidden={true}>
@@ -334,7 +360,9 @@ const PostView = (props: PostWithUser) => {
               return <div key={comment.id}>{comment.content}</div>;
             })}
           </div>
-          <div className='flex items-center gap-4 hidden'>
+          <div
+            className={`items-center gap-4 ${isCommenting ? 'flex' : 'hidden'}`}
+          >
             <Image
               src={user.profileImageUrl}
               width={48}
@@ -342,33 +370,37 @@ const PostView = (props: PostWithUser) => {
               className='h-full w-12 rounded-full'
               alt={`${user.username!}'s profile picture`}
             />
-            <div>
-              <input
-                type='text'
-                onChange={(e) => setCommentContent(e.target.value)}
-                placeholder='Add a comment...'
-                className='bg-transparent outline-none'
-                id='image-input'
-              />
-              <label htmlFor='image-input'>
-                <div className='flex cursor-pointer gap-1 text-sm w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
-                  <ImageIcon />
-                  <span className='hidden xs:inline'>Upload Image</span>
-                </div>
-              </label>
+            <div className='flex'>
+              <div className=' w-1/2 sm:w-full'>
+                <input
+                  type='text'
+                  onChange={(e) => setCommentContent(e.target.value)}
+                  value={commentContent}
+                  placeholder='Add a comment...'
+                  className='bg-transparent outline-none  w-full sm:w-auto'
+                  id='image-input'
+                />
+                <label htmlFor='image-input'>
+                  <div className='flex cursor-pointer gap-1 text-sm sm:w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+                    <ImageIcon />
+                    <span className='hidden xs:inline'>Upload Image</span>
+                  </div>
+                </label>
+              </div>
+              <button
+                onClick={() => {
+                  addComment({
+                    postId: post.id,
+                    content: commentContent,
+                    imageUrl: commentImageUrl,
+                  });
+                }}
+              >
+                <span className='bg-slate-100 text-black text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
+                  Comment
+                </span>
+              </button>
             </div>
-            <button
-              onClick={() => {
-                addComment({
-                  postId: post.id,
-                  content: commentContent,
-                  imageUrl: commentImageUrl,
-                });
-              }}
-              className='bg-slate-100 text-black mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
-            >
-              Comment
-            </button>
           </div>
         </div>
       </div>
@@ -476,8 +508,8 @@ const Home: NextPage = () => {
 
   const BottomNavBar = () => {
     return (
-      <div className='fixed bottom-0 flex h-[7%] w-full items-center justify-center border-t bg-black md:hidden'>
-        <div className=' flex'>
+      <div className='sticky bottom-0 flex h-[7%] w-full items-center justify-center border-t bg-white text-black md:hidden'>
+        <div className='flex'>
           <div className='flex items-center fill-white'>
             <HomeIcon activeTab={isActive} />
           </div>
@@ -508,7 +540,7 @@ const Home: NextPage = () => {
         <meta name='description' content='Cat Corner by Amir Adel' />
         <link rel='icon' href='/favicon.png' />
       </Head>
-      <main>
+      <main className='h-screen'>
         <div className='relative flex h-screen w-full overflow-x-hidden'>
           <SideNavBar />
           <div className='relative flex w-full flex-col grow md:items-end'>
@@ -516,10 +548,10 @@ const Home: NextPage = () => {
               {isSignedIn && <CreatePostWizard />}
               <Feed />
             </div>
-            <BottomNavBar />
           </div>
         </div>
       </main>
+      <BottomNavBar />
     </>
   );
 };

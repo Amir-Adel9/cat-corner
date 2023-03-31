@@ -104,24 +104,33 @@ export const postsRouter = createTRPCRouter({
     }),
 
   likePost: privateProcedure
-    .input(z.object({ postId: z.string(), userId: z.string() }))
+    .input(
+      z.object({ postId: z.string(), userId: z.string(), isLiked: z.boolean() })
+    )
     .mutation(async ({ ctx, input }) => {
-      const authorId = ctx.currentUserId;
-
-      const { success } = await ratelimit.limit(authorId);
-
-      if (!success) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
-
-      await ctx.prisma.post.update({
-        where: {
-          id: input.postId,
-        },
-        data: {
-          likes: {
-            increment: 1,
+      if (!input.isLiked) {
+        await ctx.prisma.post.update({
+          where: {
+            id: input.postId,
           },
-        },
-      });
+          data: {
+            likes: {
+              increment: 1,
+            },
+          },
+        });
+      } else {
+        await ctx.prisma.post.update({
+          where: {
+            id: input.postId,
+          },
+          data: {
+            likes: {
+              decrement: 1,
+            },
+          },
+        });
+      }
     }),
 
   addComment: privateProcedure
