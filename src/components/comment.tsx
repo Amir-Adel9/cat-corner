@@ -3,7 +3,7 @@ const CommentInterface = (props: { postComments: number }) => (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       viewBox='0 0 32 32'
-      className='duration-200 fill-slate-100 group-hover:fill-[#01A66F] opacity-70 group-hover:opacity-100'
+      className='duration-200 fill-content group-hover:fill-[#01A66F] opacity-70 group-hover:opacity-100'
       width={24}
       height={24}
     >

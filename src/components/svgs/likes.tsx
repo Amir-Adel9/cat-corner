@@ -8,6 +8,7 @@ const LikesIcon = (props: { activeTab: string }) => {
           xmlnsXlink='http://www.w3.org/1999/xlink'
           width='32px'
           height='32px'
+          className='fill-constant'
           viewBox='0 0 455 455'
           xmlSpace='preserve'
         >
@@ -20,6 +21,7 @@ const LikesIcon = (props: { activeTab: string }) => {
           xmlnsXlink='http://www.w3.org/1999/xlink'
           width='32px'
           height='32px'
+          className='fill-constant'
           viewBox='0 0 455 455'
           xmlSpace='preserve'
           {...props}

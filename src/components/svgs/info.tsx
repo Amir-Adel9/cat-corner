@@ -3,7 +3,7 @@ const InfoIcon = (props: { activeTab: string }) => {
     <span>
       {props.activeTab === 'Info' ? (
         <svg
-          fill='#000000'
+          className='fill-constant'
           id='Layer_1'
           xmlns='http://www.w3.org/2000/svg'
           xmlnsXlink='http://www.w3.org/1999/xlink'
@@ -20,13 +20,14 @@ const InfoIcon = (props: { activeTab: string }) => {
           width='32px'
           height='32px'
           viewBox='0 0 24 24'
+          className='fill-constant'
           xmlns='http://www.w3.org/2000/svg'
           {...props}
         >
           <defs>
             <style>
               {
-                '\n      .cls-1 {\n        fill: #101010;\n        fill-rule: evenodd;\n      }\n    '
+                '\n      .cls-1 {\n        \n        fill-rule: evenodd;\n      }\n    '
               }
             </style>
           </defs>

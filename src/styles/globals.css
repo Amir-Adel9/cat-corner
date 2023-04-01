@@ -2,6 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-black text-slate-100;
+body,
+main {
+  @apply bg-primary text-accent;
+}
+
+@layer base {
+  :root {
+    --color-primary: #000000;
+    --color-secondary: #ffffff;
+    --color-accent: #f1f5f9;
+    --color-content: #f1f5f9;
+    --color-inverse-content: #000000;
+  }
+}
+
+.theme-Dark {
+  --color-primary: #000000;
+  --color-secondary: #ffffff;
+  --color-accent: #f1f5f9;
+  --color-content: #f1f5f9;
+  --color-inverse-content: #000000;
+  --color-constant: #000000;
+}
+
+.theme-Light {
+  --color-primary: #f1f5f9;
+  --color-secondary: #ffffff;
+  --color-accent: #000000;
+  --color-content: #000000;
+  --color-inverse-content: #ffffff;
+  --color-constant: #000000;
+}
+
+.theme-Ember {
+  --color-primary: #000000;
+  --color-secondary: #fde047;
+  --color-accent: #fde047;
+  --color-content: #f1f5f9;
+  --color-inverse-content: #000000;
+  --color-constant: #000000;
+}
+
+.theme-Lavender {
+  --color-primary: #000000;
+  --color-secondary: #a855f7;
+  --color-accent: #a855f7;
+  --color-content: #f1f5f9;
+  --color-inverse-content: #000000;
+  --color-constant: #000000;
+}
+
+.theme-Emerald {
+  --color-primary: #000000;
+  --color-secondary: #2fe691;
+  --color-accent: #2fe691;
+  --color-content: #f1f5f9;
+  --color-inverse-content: #000000;
+  --color-constant: #000000;
+}
+
+.theme-crimson {
+  --color-primary: #9f2727;
+  --color-hovered: #6f2121;
+  --color-correct-char: #2fe691;
+  --color-wrong-char: #fde047;
+  --color-underline: #a855f7;
+}
+
+.theme-azure {
+  --color-primary: #366cbd;
+  --color-hovered: #31558a;
+  --color-correct-char: #2fe691;
+  --color-wrong-char: #fde047;
+  --color-underline: #a855f7;
 }
