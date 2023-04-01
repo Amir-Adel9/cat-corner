@@ -4,7 +4,7 @@ const LikeInterface = (props: { likes: number; isLiked: boolean }) => (
       <svg
         xmlns='http://www.w3.org/2000/svg'
         viewBox='0 0 24 24'
-        className='duration-200 fill-slate-100 group-hover:fill-[#f91880] opacity-70 group-hover:opacity-100'
+        className='duration-200 fill-content group-hover:fill-[#f91880] opacity-70 group-hover:opacity-100'
         width={24}
         height={24}
         {...props}

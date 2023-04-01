@@ -6,6 +6,14 @@ const config = {
       screens: {
         xs: '360px',
       },
+      colors: {
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        accent: 'var(--color-accent)',
+        content: 'var(--color-content)',
+        inverseContent: 'var(--color-inverse-content)',
+        constant: 'var(--color-constant)',
+      },
       fontFamily: {
         sono: ['Sono'],
         tilt: ['Tilt Warp'],
