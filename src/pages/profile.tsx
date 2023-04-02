@@ -1,7 +1,7 @@
 import { useUser } from '@clerk/nextjs';
 import { type NextPage } from 'next';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BottomNavBar, SideNavBar } from '~/components/navbar';
 import { themes } from '~/constants/themes';
 import { api } from '~/utils/api';
@@ -12,6 +12,16 @@ const Profile: NextPage = () => {
   const [selectedTheme, setSelectedTheme] = useState(themes[0] as string);
 
   api.posts.getAll.useQuery();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('selectedTheme') as string;
+
+    if (!storedTheme) {
+      setSelectedTheme(themes[0] as string);
+    } else {
+      setSelectedTheme(storedTheme);
+    }
+  }, []);
 
   if (!userLoaded) return <div />;
 

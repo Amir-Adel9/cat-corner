@@ -28,7 +28,7 @@ export const SideNavBar = (props: {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`fixed text-constant z-10 hidden h-full font-noto items-center group hover:items-start duration-300 bg-secondary md:flex md:flex-col ${
-        isHovered || isTheming ? 'w-[15%]' : 'w-[5%]'
+        isHovered ? 'w-[15%]' : 'w-[5%]'
       }`}
     >
       <div className='flex justify-center items-center group-hover:pl-5'>
@@ -119,6 +119,7 @@ export const SideNavBar = (props: {
             key={theme}
             onClick={() => {
               selectedThemeHandler(theme);
+              localStorage.setItem('selectedTheme', theme);
             }}
           >
             {theme}

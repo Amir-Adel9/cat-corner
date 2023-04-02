@@ -13,7 +13,7 @@ import updateLocale from 'dayjs/plugin/updateLocale';
 
 import { LoadingPage, LoadingSpinner } from '~/components/loading';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import toast from 'react-hot-toast';
 
@@ -439,6 +439,16 @@ const Home: NextPage = () => {
   const [selectedTheme, setSelectedTheme] = useState(themes[0] as string);
 
   api.posts.getAll.useQuery();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem('selectedTheme') as string;
+
+    if (!storedTheme) {
+      setSelectedTheme(themes[0] as string);
+    } else {
+      setSelectedTheme(storedTheme);
+    }
+  }, []);
 
   if (!userLoaded) return <div />;
 
