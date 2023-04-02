@@ -1,4 +1,4 @@
-import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
+import { useUser } from '@clerk/nextjs';
 
 import { type NextPage } from 'next';
 
@@ -20,15 +20,11 @@ import toast from 'react-hot-toast';
 import ImageIcon from '~/components/svgs/image';
 
 import { env } from '../env.mjs';
-import HomeIcon from '~/components/svgs/home';
-import ProfileIcon from '~/components/svgs/profile';
-import LikesIcon from '~/components/svgs/likes';
-import InfoIcon from '~/components/svgs/info';
-import ThemeIcon from '~/components/svgs/theme';
 import LikeInterface from '~/components/like';
 import CommentInterface from '~/components/comment';
 
 import { themes } from '../constants/themes';
+import { BottomNavBar, SideNavBar } from '~/components/navbar';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -85,7 +81,7 @@ const CreatePostWizard = () => {
     },
   });
 
-  if (!user) return null;
+  if (!user) return <div>Sign in to start Posting</div>;
 
   return (
     <div className='flex items-start gap-2 sm:gap-5 border-b border-accent pt-10 pb-5 pl-5 w-full font-noto'>
@@ -273,8 +269,6 @@ const PostView = (props: PostWithUser) => {
 
   const commentInputRef = useRef<HTMLInputElement>(null);
 
-  if (!user) return <div></div>;
-
   const { mutate: addComment } = api.posts.addComment.useMutation({
     onSuccess: () => {
       void ctx.posts.invalidate();
@@ -292,7 +286,7 @@ const PostView = (props: PostWithUser) => {
   return (
     <div
       key={post.id}
-      className='flex sm:gap-5 border-b border-accent  py-5 sm:pl-5'
+      className='flex sm:gap-5 cursor-pointer border-b border-accent py-5 sm:pl-5'
     >
       <Image
         src={author.profileImageUrl}
@@ -318,11 +312,12 @@ const PostView = (props: PostWithUser) => {
             <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
           </div>
         </div>
-        <span className='font-sans'>{post.content}</span>
+
         <div
           className={`relative  flex flex-col gap-2 max-w-xs sm:max-w-lg`}
           style={{ width: `${post.imageWidth}px` }}
         >
+          <div className='font-sans w-full text-start'>{post.content}</div>
           <Image
             src={post.imageUrl}
             alt={`${post.authorId}'s cat image`}
@@ -333,6 +328,9 @@ const PostView = (props: PostWithUser) => {
           <div className='flex justify-around '>
             <div
               onClick={() => {
+                if (!user) {
+                  return;
+                }
                 setIsLiked(!isLiked);
                 if (!isLiked) {
                   setPostLikes(postLikes + 1);
@@ -353,7 +351,14 @@ const PostView = (props: PostWithUser) => {
             >
               <LikeInterface likes={postLikes} isLiked={isLiked} />
             </div>
-            <div onClick={() => setIsCommenting(!isCommenting)}>
+            <div
+              onClick={() => {
+                if (!user) {
+                  return;
+                }
+                setIsCommenting(!isCommenting);
+              }}
+            >
               <CommentInterface postComments={post.comments.length} />
             </div>
           </div>
@@ -366,11 +371,11 @@ const PostView = (props: PostWithUser) => {
             className={`items-center gap-4 ${isCommenting ? 'flex' : 'hidden'}`}
           >
             <Image
-              src={user.profileImageUrl}
+              src={user?.profileImageUrl as string}
               width={48}
               height={48}
               className='h-full w-12 rounded-full'
-              alt={`${user.username!}'s profile picture`}
+              alt={`${user?.username as string}'s profile picture`}
             />
             <div className='flex'>
               <div className=' w-1/2 sm:w-full'>
@@ -385,7 +390,9 @@ const PostView = (props: PostWithUser) => {
                 <label htmlFor='image-input'>
                   <div className='flex cursor-pointer gap-1 text-sm sm:w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
                     <ImageIcon />
-                    <span className='hidden xs:inline'>Upload Image</span>
+                    <span className='hidden xs:inline text-accent'>
+                      Upload Image
+                    </span>
                   </div>
                 </label>
               </div>
@@ -398,7 +405,7 @@ const PostView = (props: PostWithUser) => {
                   });
                 }}
               >
-                <span className='bg-accent text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
+                <span className='bg-accent text-inverseContent text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
                   Comment
                 </span>
               </button>
@@ -427,140 +434,13 @@ const Feed = () => {
 };
 
 const Home: NextPage = () => {
-  const { isLoaded: userLoaded, isSignedIn } = useUser();
+  const { isLoaded: userLoaded } = useUser();
+
   const [selectedTheme, setSelectedTheme] = useState(themes[0] as string);
-  const [isActive, setIsActive] = useState('Home');
 
   api.posts.getAll.useQuery();
 
   if (!userLoaded) return <div />;
-
-  const SideNavBar = () => {
-    const [isHovered, setIsHovered] = useState(false);
-    return (
-      <div
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className='fixed text-constant z-10 hidden h-full font-noto items-center group hover:items-start duration-300 bg-secondary md:flex md:flex-col md:w-[5%] hover:w-[15%]'
-      >
-        <div className='flex justify-center items-center group-hover:pl-5'>
-          <Image
-            src='/logo.png'
-            width={50}
-            height={50}
-            className='rounded-full'
-            alt='Cat Corner Logo'
-          />
-          <span className='ml-1' hidden={!isHovered}>
-            Cat Corner
-          </span>
-        </div>
-        <div className='w-full h-1/2 flex flex-col duration-200 items-center justify-evenly group-hover:items-start group-hover:pl-5'>
-          <div
-            onClick={() => setIsActive('Home')}
-            className='flex items-center cursor-pointer'
-          >
-            <HomeIcon activeTab={isActive} />
-            <span className='ml-1' hidden={!isHovered}>
-              Home
-            </span>
-          </div>
-
-          <div
-            onClick={() => setIsActive('Profile')}
-            className='flex items-center cursor-pointer group-hover:-translate-x-2'
-          >
-            <ProfileIcon activeTab={isActive} />
-            <span hidden={!isHovered}>Profile</span>
-          </div>
-          <div
-            onClick={() => setIsActive('Likes')}
-            className='flex items-center cursor-pointer'
-          >
-            <LikesIcon activeTab={isActive} />
-            <span className='ml-1' hidden={!isHovered}>
-              Likes
-            </span>
-          </div>
-          <div
-            onClick={() => {
-              setIsActive('Theme');
-            }}
-            className='flex items-center cursor-pointer'
-          >
-            <ThemeIcon activeTab={isActive} />
-            <div className='ml-1' hidden={!isHovered}>
-              Theme
-            </div>
-          </div>
-          <div
-            onClick={() => setIsActive('Info')}
-            className='flex items-center cursor-pointer'
-          >
-            <InfoIcon activeTab={isActive} />
-            <span className='ml-1' hidden={!isHovered}>
-              Info
-            </span>
-          </div>
-        </div>
-        <ul
-          className={`flex-col items-center group-hover:items-start group-hover:pl-5 ${
-            isActive !== 'Theme' ? 'hidden' : 'flex'
-          }`}
-        >
-          <div className='text-center'>Select a theme</div>
-          {themes.map((theme) => (
-            <li
-              className='cursor-pointer'
-              key={theme}
-              onClick={() => {
-                setSelectedTheme(theme);
-              }}
-            >
-              {theme}
-            </li>
-          ))}
-          <div
-            onClick={() => setIsActive('Home')}
-            className='text-center cursor-pointer bg-constant text-secondary rounded px-2 py-1 mt-2'
-          >
-            Save
-          </div>
-        </ul>
-        <div className='absolute bottom-2'>
-          {!isSignedIn && <SignInButton />}
-          {!!isSignedIn && <SignOutButton />}
-        </div>
-      </div>
-    );
-  };
-
-  const BottomNavBar = () => {
-    return (
-      <div className='sticky text-constant bottom-0 flex h-[7%] w-full items-center justify-center border-t bg-secondary md:hidden'>
-        <div className='flex'>
-          <div className='flex items-center'>
-            <HomeIcon activeTab={isActive} />
-          </div>
-
-          <div className='flex items-center group-hover:-translate-x-2'>
-            <ProfileIcon activeTab={isActive} />
-          </div>
-          <div className='flex items-center'>
-            <LikesIcon activeTab={isActive} />
-          </div>
-          <div className='flex items-center'>
-            <ThemeIcon activeTab={isActive} />
-          </div>
-          <div className='flex items-center'>
-            <InfoIcon activeTab={isActive} />
-          </div>
-          {!isSignedIn && <SignInButton />}
-          {!!isSignedIn && <SignOutButton />}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
@@ -571,10 +451,10 @@ const Home: NextPage = () => {
       </Head>
       <main className={`h-screen theme-${selectedTheme} text-content`}>
         <div className='relative flex h-screen w-full overflow-x-hidden'>
-          <SideNavBar />
+          <SideNavBar selectedThemeHandler={setSelectedTheme} />
           <div className='relative flex w-full flex-col grow md:items-end'>
             <div className='duration-300 md:w-[95%]'>
-              {isSignedIn && <CreatePostWizard />}
+              <CreatePostWizard />
               <Feed />
             </div>
           </div>
