@@ -1,7 +1,7 @@
 const HomeIcon = (props: { activeTab: string }) => {
   return (
     <span>
-      {props.activeTab === 'Home' ? (
+      {props.activeTab === '/' ? (
         <svg
           width='32px'
           height='32px'
