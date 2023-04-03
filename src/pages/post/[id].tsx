@@ -19,11 +19,11 @@ import toast from 'react-hot-toast';
 
 import ImageIcon from '~/components/svgs/image';
 
-import { env } from '../env.mjs';
+import { env } from '../../env.mjs';
 import LikeInterface from '~/components/like';
 import CommentInterface from '~/components/comment';
 
-import { themes } from '../constants/themes';
+import { themes } from '../../constants/themes';
 import { BottomNavBar, SideNavBar } from '~/components/navbar';
 
 dayjs.extend(relativeTime);

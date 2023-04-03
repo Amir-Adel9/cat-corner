@@ -28,9 +28,7 @@ const Profile: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Cat Corner</title>
-        <meta name='description' content='Cat Corner by Amir Adel' />
-        <link rel='icon' href='/favicon.png' />
+        <title>Profile / Cat Corner</title>
       </Head>
       <main className={`h-screen theme-${selectedTheme} text-content`}>
         <div className='relative flex h-screen w-full overflow-x-hidden'>

@@ -62,18 +62,20 @@ main {
   --color-constant: #000000;
 }
 
-.theme-crimson {
-  --color-primary: #9f2727;
-  --color-hovered: #6f2121;
-  --color-correct-char: #2fe691;
-  --color-wrong-char: #fde047;
-  --color-underline: #a855f7;
+.theme-Crimson {
+  --color-primary: #000000;
+  --color-secondary: #9f2727;
+  --color-accent: #9f2727;
+  --color-content: #f1f5f9;
+  --color-inverse-content: #000000;
+  --color-constant: #000000;
 }
 
-.theme-azure {
-  --color-primary: #366cbd;
-  --color-hovered: #31558a;
-  --color-correct-char: #2fe691;
-  --color-wrong-char: #fde047;
-  --color-underline: #a855f7;
+.theme-Azure {
+  --color-primary: #000000;
+  --color-secondary: #366cbd;
+  --color-accent: #366cbd;
+  --color-content: #f1f5f9;
+  --color-inverse-content: #000000;
+  --color-constant: #000000;
 }
