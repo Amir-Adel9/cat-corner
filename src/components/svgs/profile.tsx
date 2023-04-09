@@ -1,7 +1,7 @@
-const ProfileIcon = (props: { activeTab: string }) => {
+const ProfileIcon = (props: { activeTab: string; username: string }) => {
   return (
     <span>
-      {props.activeTab === '/profile' ? (
+      {props.activeTab === `${props.username}` ? (
         <svg
           width='42px'
           height='42px'

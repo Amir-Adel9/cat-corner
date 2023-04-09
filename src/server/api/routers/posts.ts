@@ -13,17 +13,8 @@ import {
   privateProcedure,
   publicProcedure,
 } from '~/server/api/trpc';
+import { filterUserForClient } from '~/server/helpers/filterUserForClient';
 import { uploadImage } from '~/utils/cloudinary';
-
-const filterUserForClient = (user: User) => {
-  return {
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    username: user.username,
-    profileImageUrl: user.profileImageUrl,
-  };
-};
 
 const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
@@ -77,6 +68,27 @@ export const postsRouter = createTRPCRouter({
     });
   }),
 
+  getPostsByUser: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userPosts = await ctx.prisma.post.findMany({
+        take: 100,
+        select: {
+          id: true,
+          authorId: true,
+          content: true,
+          imageUrl: true,
+          imageWidth: true,
+          imageHeight: true,
+          likes: true,
+          comments: true,
+          createdAt: true,
+        },
+        where: { authorId: input.userId },
+        orderBy: { createdAt: 'desc' },
+      });
+      return userPosts;
+    }),
   createPost: privateProcedure
     .input(
       z.object({ content: z.string().optional(), imageUrl: z.string().url() })

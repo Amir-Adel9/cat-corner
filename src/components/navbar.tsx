@@ -1,5 +1,6 @@
 import { useUser, SignInButton, SignOutButton } from '@clerk/nextjs';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { themes } from '~/constants/themes';
@@ -13,13 +14,16 @@ export const SideNavBar = (props: {
   selectedThemeHandler: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const { user, isSignedIn } = useUser();
+
   const router = useRouter();
+
+  const routeQuery = router.query.slug as string;
 
   const { selectedThemeHandler } = props;
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const [isActive, setIsActive] = useState(router.pathname);
+  const [isActive, setIsActive] = useState(routeQuery);
 
   const [isTheming, setIsTheming] = useState(false);
 
@@ -31,7 +35,7 @@ export const SideNavBar = (props: {
         isHovered ? 'w-[15%]' : 'w-[5%]'
       }`}
     >
-      <div className='flex justify-center items-center group-hover:pl-5'>
+      <div className='flex justify-center items-center gap-1 group-hover:pl-5'>
         <Image
           src='/logo.png'
           width={50}
@@ -39,36 +43,39 @@ export const SideNavBar = (props: {
           className='rounded-full'
           alt='Cat Corner Logo'
         />
-        <span className='ml-1' hidden={!isHovered}>
-          Cat Corner
-        </span>
+        <span hidden={!isHovered}>Cat Corner</span>
       </div>
       <div className='h-1/2'>
         <div className='w-full h-full flex flex-col duration-200 items-center justify-evenly group-hover:items-start group-hover:pl-5'>
-          <div
-            onClick={() => {
-              setIsActive(router.pathname);
-              setIsTheming(false);
-              void router.push('/');
-            }}
-            className='flex items-center cursor-pointer'
-          >
-            <HomeIcon activeTab={isActive} />
-            <span className='ml-1' hidden={!isHovered}>
-              Home
-            </span>
-          </div>
-          <div
-            onClick={() => {
-              setIsActive(router.pathname);
-              setIsTheming(false);
-              void router.push('/profile');
-            }}
-            className='flex items-center cursor-pointer group-hover:-translate-x-2'
-          >
-            <ProfileIcon activeTab={isActive} />
-            <span hidden={!isHovered}>Profile</span>
-          </div>
+          <Link href={'/'}>
+            <div
+              onClick={() => {
+                setIsActive(router.pathname);
+                setIsTheming(false);
+              }}
+              className='flex items-center cursor-pointer'
+            >
+              <HomeIcon activeTab={isActive} />
+              <span className='ml-1' hidden={!isHovered}>
+                Home
+              </span>
+            </div>
+          </Link>
+          <Link href={{ pathname: '/[slug]', query: { slug: user?.username } }}>
+            <div
+              onClick={() => {
+                setIsActive(routeQuery);
+                setIsTheming(false);
+              }}
+              className='flex items-center cursor-pointer group-hover:-translate-x-2'
+            >
+              <ProfileIcon
+                activeTab={isActive}
+                username={`${isSignedIn ? (user.username as string) : ''}`}
+              />
+              <span hidden={!isHovered}>Profile</span>
+            </div>
+          </Link>
           <div
             onClick={() => {
               setIsActive('Likes');
@@ -177,7 +184,7 @@ export const SideNavBar = (props: {
 };
 
 export const BottomNavBar = () => {
-  const { isSignedIn } = useUser();
+  const { user, isSignedIn } = useUser();
   const router = useRouter();
 
   const [isActive, setIsActive] = useState(router.pathname);
@@ -195,15 +202,19 @@ export const BottomNavBar = () => {
           <HomeIcon activeTab={isActive} />
         </div>
 
-        <div
-          onClick={() => {
-            setIsActive(router.pathname);
-            void router.push('/profile');
-          }}
-          className='flex items-center group-hover:-translate-x-2'
-        >
-          <ProfileIcon activeTab={isActive} />
-        </div>
+        <Link href={`/${isSignedIn ? (user.username as string) : ''}`}>
+          <div
+            onClick={() => {
+              setIsActive(router.pathname);
+            }}
+            className='flex items-center cursor-pointer group-hover:-translate-x-2'
+          >
+            <ProfileIcon
+              activeTab={isActive}
+              username={`${isSignedIn ? (user.username as string) : ''}`}
+            />
+          </div>
+        </Link>
         <div className='flex items-center'>
           <LikesIcon activeTab={isActive} />
         </div>
