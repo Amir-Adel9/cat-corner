@@ -25,6 +25,7 @@ import CommentInterface from '~/components/comment';
 
 import { themes } from '../constants/themes';
 import { BottomNavBar, SideNavBar } from '~/components/navbar';
+import Link from 'next/link';
 
 dayjs.extend(relativeTime);
 dayjs.extend(updateLocale);
@@ -284,136 +285,150 @@ const PostView = (props: PostWithUser) => {
   });
 
   return (
-    <div
-      key={post.id}
-      className='flex sm:gap-5 cursor-pointer border-b border-accent py-5 sm:pl-5'
-    >
-      <Image
-        src={author.profileImageUrl}
-        width={48}
-        height={48}
-        className='h-full w-12 rounded-full hidden sm:inline'
-        alt={`${author.username}'s profile picture`}
-      />
-      <div className='flex w-full h-full items-center sm:items-start flex-col gap-3 font-noto'>
-        <div className='flex  w-full sm:m-0'>
-          <div className='flex items-center xs:flex-row xs:gap-2'>
+    <Link href={`/post/${post.id}`}>
+      <div
+        key={post.id}
+        className='flex sm:gap-5 cursor-pointer border-b border-accent py-5 sm:pl-5'
+      >
+        <div>
+          <Link href={`${author.username}`}>
             <Image
               src={author.profileImageUrl}
               width={48}
               height={48}
-              className='h-full w-12 rounded-full inline sm:hidden'
+              className='h-ful w-12 rounded-full hidden sm:inline'
               alt={`${author.username}'s profile picture`}
             />
-            <span className='font-bold'>{`${
-              author.firstName ? author.firstName : ''
-            } ${author.lastName ? author.lastName : ''}`}</span>
-            <span className='text-sm opacity-70 font-sans'>{`@${author.username}`}</span>
-            <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
-          </div>
+          </Link>
         </div>
 
-        <div
-          className={`relative  flex flex-col gap-2 max-w-xs sm:max-w-lg`}
-          style={{ width: `${post.imageWidth}px` }}
-        >
-          <div className='font-sans w-full text-start'>{post.content}</div>
-          <Image
-            src={post.imageUrl}
-            alt={`${post.authorId}'s cat image`}
-            className='rounded'
-            width={post.imageWidth}
-            height={post.imageHeight}
-          />
-          <div className='flex justify-around '>
-            <div
-              onClick={() => {
-                if (!user) {
-                  return;
-                }
-                setIsLiked(!isLiked);
-                if (!isLiked) {
-                  setPostLikes(postLikes + 1);
-                  likePost({
-                    postId: post.id,
-                    userId: user?.id,
-                    isLiked: isLiked,
-                  });
-                } else {
-                  setPostLikes(postLikes - 1);
-                  likePost({
-                    postId: post.id,
-                    userId: user?.id,
-                    isLiked: isLiked,
-                  });
-                }
-              }}
-            >
-              <LikeInterface likes={postLikes} isLiked={isLiked} />
-            </div>
-            <div
-              onClick={() => {
-                if (!user) {
-                  return;
-                }
-                setIsCommenting(!isCommenting);
-              }}
-            >
-              <CommentInterface postComments={post.comments.length} />
+        <div className='flex w-full h-full items-center sm:items-start flex-col gap-3 font-noto'>
+          <div className='flex  w-full sm:m-0'>
+            <div className='flex items-center xs:flex-row xs:gap-2'>
+              <Image
+                src={author.profileImageUrl}
+                width={48}
+                height={48}
+                className='h-full w-12 rounded-full inline sm:hidden'
+                alt={`${author.username}'s profile picture`}
+              />
+              <Link href={`${author.username}`}>
+                <div className='flex items-center gap-2'>
+                  <span className='font-bold hover:underline'>{`${
+                    author.firstName ? author.firstName : ''
+                  } ${author.lastName ? author.lastName : ''}`}</span>
+                  <span className='text-sm opacity-70 font-sans hover:underline'>{`@${author.username}`}</span>
+                </div>
+              </Link>
+
+              <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
             </div>
           </div>
-          <div hidden={true}>
-            {post.comments.map((comment) => {
-              return <div key={comment.id}>{comment.content}</div>;
-            })}
-          </div>
+
           <div
-            className={`items-center gap-4 ${isCommenting ? 'flex' : 'hidden'}`}
+            className={`relative  flex flex-col gap-2 max-w-xs sm:max-w-lg`}
+            style={{ width: `${post.imageWidth}px` }}
           >
+            <div className='font-sans w-full text-start'>{post.content}</div>
             <Image
-              src={user?.profileImageUrl as string}
-              width={48}
-              height={48}
-              className='h-full w-12 rounded-full'
-              alt={`${user?.username as string}'s profile picture`}
+              src={post.imageUrl}
+              alt={`${post.authorId}'s cat image`}
+              className='rounded'
+              width={post.imageWidth}
+              height={post.imageHeight}
             />
-            <div className='flex  grow'>
-              <div className='w-full'>
-                <input
-                  type='text'
-                  onChange={(e) => setCommentContent(e.target.value)}
-                  value={commentContent}
-                  placeholder='Add a comment...'
-                  className='bg-transparent outline-none  w-full sm:w-auto'
-                  id='image-input'
-                />
-                <label htmlFor='image-input'>
-                  <div className='flex cursor-pointer gap-1 text-sm sm:w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
-                    <ImageIcon />
-                    <span className='hidden xs:inline text-accent'>
-                      Upload Image
-                    </span>
-                  </div>
-                </label>
-              </div>
-              <button
+            <div className='flex justify-around '>
+              <div
                 onClick={() => {
-                  addComment({
-                    postId: post.id,
-                    content: commentContent,
-                    imageUrl: commentImageUrl,
-                  });
+                  if (!user) {
+                    return;
+                  }
+                  setIsLiked(!isLiked);
+                  if (!isLiked) {
+                    setPostLikes(postLikes + 1);
+                    likePost({
+                      postId: post.id,
+                      userId: user?.id,
+                      isLiked: isLiked,
+                    });
+                  } else {
+                    setPostLikes(postLikes - 1);
+                    likePost({
+                      postId: post.id,
+                      userId: user?.id,
+                      isLiked: isLiked,
+                    });
+                  }
                 }}
               >
-                <span className='bg-accent text-inverseContent text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
-                  Comment
-                </span>
-              </button>
+                <LikeInterface likes={postLikes} isLiked={isLiked} />
+              </div>
+              <div
+                onClick={() => {
+                  if (!user) {
+                    return;
+                  }
+                  setIsCommenting(!isCommenting);
+                }}
+              >
+                <CommentInterface postComments={post.comments.length} />
+              </div>
+            </div>
+            <div hidden={true}>
+              {post.comments.map((comment) => {
+                return <div key={comment.id}>{comment.content}</div>;
+              })}
+            </div>
+            <div
+              className={`items-center gap-4 ${
+                isCommenting ? 'flex' : 'hidden'
+              }`}
+            >
+              <Image
+                src={user?.profileImageUrl as string}
+                width={48}
+                height={48}
+                className='h-full w-12 rounded-full'
+                alt={`${user?.username as string}'s profile picture`}
+              />
+              <div className='flex  grow'>
+                <div className='w-full'>
+                  <input
+                    type='text'
+                    onChange={(e) => setCommentContent(e.target.value)}
+                    value={commentContent}
+                    placeholder='Add a comment...'
+                    className='bg-transparent outline-none  w-full sm:w-auto'
+                    id='image-input'
+                  />
+                  <label htmlFor='image-input'>
+                    <div className='flex cursor-pointer gap-1 text-sm sm:w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+                      <ImageIcon />
+                      <span className='hidden xs:inline text-accent'>
+                        Upload Image
+                      </span>
+                    </div>
+                  </label>
+                </div>
+                <button
+                  onClick={() => {
+                    addComment({
+                      postId: post.id,
+                      content: commentContent,
+                      imageUrl: commentImageUrl,
+                    });
+                  }}
+                >
+                  <span className='bg-accent text-inverseContent text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
+                    Comment
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
