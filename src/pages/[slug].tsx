@@ -89,7 +89,6 @@ const Profile: NextPage = () => {
                             />
                           </Link>
                         </div>
-
                         <div className='flex w-full h-full items-center sm:items-start flex-col gap-3 font-noto'>
                           <div className='flex  w-full sm:m-0'>
                             <div className='flex items-center xs:flex-row xs:gap-2'>
@@ -116,7 +115,6 @@ const Profile: NextPage = () => {
                               </Link>
                             </div>
                           </div>
-
                           <div
                             className={`relative  flex flex-col gap-2 max-w-xs sm:max-w-lg`}
                             style={{ width: `${post.imageWidth}px` }}
