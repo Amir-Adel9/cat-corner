@@ -472,6 +472,10 @@ const Home: NextPage = () => {
       <Head>
         <title>Home / Cat Corner</title>
       </Head>
+      <header className='bg-red-700 text-center font-tilt text-lg'>
+        This website is still under development, some features may be broken,
+        give it a try tho.
+      </header>
       <main className={`h-screen theme-${selectedTheme} text-content`}>
         <div className='relative flex h-screen w-full overflow-x-hidden'>
           <SideNavBar selectedThemeHandler={setSelectedTheme} />
