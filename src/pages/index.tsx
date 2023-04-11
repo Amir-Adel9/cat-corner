@@ -285,48 +285,46 @@ const PostView = (props: PostWithUser) => {
   });
 
   return (
-    <Link href={`/post/${post.id}`}>
-      <div
-        key={post.id}
-        className='flex sm:gap-5 cursor-pointer border-b border-accent py-5 sm:pl-5'
-      >
-        <div>
-          <Link href={`${author.username}`}>
+    <div
+      key={post.id}
+      className='flex sm:gap-5  border-b border-accent py-5 sm:pl-5'
+    >
+      <div>
+        <Link href={`${author.username}`}>
+          <Image
+            src={author.profileImageUrl}
+            width={48}
+            height={48}
+            className='h-ful w-12 rounded-full hidden sm:inline'
+            alt={`${author.username}'s profile picture`}
+          />
+        </Link>
+      </div>
+
+      <div className='flex w-full h-full items-center sm:items-start flex-col gap-3 font-noto'>
+        <div className='flex  w-full sm:m-0'>
+          <div className='flex items-center xs:flex-row xs:gap-2'>
             <Image
               src={author.profileImageUrl}
               width={48}
               height={48}
-              className='h-ful w-12 rounded-full hidden sm:inline'
+              className='h-full w-12 rounded-full inline sm:hidden'
               alt={`${author.username}'s profile picture`}
             />
-          </Link>
-        </div>
-
-        <div className='flex w-full h-full items-center sm:items-start flex-col gap-3 font-noto'>
-          <div className='flex  w-full sm:m-0'>
-            <div className='flex items-center xs:flex-row xs:gap-2'>
-              <Image
-                src={author.profileImageUrl}
-                width={48}
-                height={48}
-                className='h-full w-12 rounded-full inline sm:hidden'
-                alt={`${author.username}'s profile picture`}
-              />
-              <Link href={`${author.username}`}>
-                <div className='flex items-center gap-2'>
-                  <span className='font-bold hover:underline'>{`${
-                    author.firstName ? author.firstName : ''
-                  } ${author.lastName ? author.lastName : ''}`}</span>
-                  <span className='text-sm opacity-70 font-sans hover:underline'>{`@${author.username}`}</span>
-                </div>
-              </Link>
-
-              <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
-            </div>
+            <Link href={`${author.username}`}>
+              <div className='flex items-center gap-2'>
+                <span className='font-bold hover:underline'>{`${
+                  author.firstName ? author.firstName : ''
+                } ${author.lastName ? author.lastName : ''}`}</span>
+                <span className='text-sm opacity-70 font-sans hover:underline'>{`@${author.username}`}</span>
+              </div>
+            </Link>
+            <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
           </div>
-
+        </div>
+        <Link href={`/post/${post.id}`}>
           <div
-            className={`relative  flex flex-col gap-2 max-w-xs sm:max-w-lg`}
+            className={`relative flex flex-col gap-2 max-w-xs sm:max-w-lg cursor-pointer`}
             style={{ width: `${post.imageWidth}px` }}
           >
             <div className='font-sans w-full text-start'>{post.content}</div>
@@ -426,9 +424,9 @@ const PostView = (props: PostWithUser) => {
               </div>
             </div>
           </div>
-        </div>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 };
 
@@ -472,15 +470,18 @@ const Home: NextPage = () => {
       <Head>
         <title>Home / Cat Corner</title>
       </Head>
-      <header className='bg-red-700 text-center font-tilt text-lg'>
-        This website is still under development, some features may be broken,
-        give it a try tho.
-      </header>
+
       <main className={`h-screen theme-${selectedTheme} text-content`}>
         <div className='relative flex h-screen w-full overflow-x-hidden'>
           <SideNavBar selectedThemeHandler={setSelectedTheme} />
           <div className='relative flex w-full flex-col grow md:items-end'>
             <div className='duration-300 md:w-[95%]'>
+              <header className='fixed bg-red-700 flex items-center justify-center font-tilt text-lg h-[3%] w-full z-10 '>
+                <div>
+                  This website is still under development, some features may be
+                  broken, give it a try tho.
+                </div>
+              </header>
               <CreatePostWizard />
               <Feed />
             </div>
