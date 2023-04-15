@@ -31,7 +31,7 @@ export const SideNavBar = (props: {
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`fixed text-constant z-10 hidden h-full font-noto items-center group hover:items-start duration-300 bg-secondary md:flex md:flex-col ${
+      className={`fixed text-constant z-20 hidden h-full font-noto items-center group hover:items-start duration-300 bg-secondary md:flex md:flex-col ${
         isHovered ? 'w-[15%]' : 'w-[5%]'
       }`}
     >

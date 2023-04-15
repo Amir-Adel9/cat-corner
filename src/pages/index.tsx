@@ -322,11 +322,12 @@ const PostView = (props: PostWithUser) => {
             <span>{`· ${dayjs(post.createdAt).fromNow()}`}</span>
           </div>
         </div>
-        <Link href={`/post/${post.id}`}>
-          <div
-            className={`relative flex flex-col gap-2 max-w-xs sm:max-w-lg cursor-pointer`}
-            style={{ width: `${post.imageWidth}px` }}
-          >
+
+        <div
+          className={`relative flex flex-col gap-2 max-w-xs sm:max-w-lg cursor-pointer`}
+          style={{ width: `${post.imageWidth}px` }}
+        >
+          <Link href={`/post/${post.id}`}>
             <div className='font-sans w-full text-start'>{post.content}</div>
             <Image
               src={post.imageUrl}
@@ -335,96 +336,94 @@ const PostView = (props: PostWithUser) => {
               width={post.imageWidth}
               height={post.imageHeight}
             />
-            <div className='flex justify-around '>
-              <div
-                onClick={() => {
-                  if (!user) {
-                    return;
-                  }
-                  setIsLiked(!isLiked);
-                  if (!isLiked) {
-                    setPostLikes(postLikes + 1);
-                    likePost({
-                      postId: post.id,
-                      userId: user?.id,
-                      isLiked: isLiked,
-                    });
-                  } else {
-                    setPostLikes(postLikes - 1);
-                    likePost({
-                      postId: post.id,
-                      userId: user?.id,
-                      isLiked: isLiked,
-                    });
-                  }
-                }}
-              >
-                <LikeInterface likes={postLikes} isLiked={isLiked} />
-              </div>
-              <div
-                onClick={() => {
-                  if (!user) {
-                    return;
-                  }
-                  setIsCommenting(!isCommenting);
-                }}
-              >
-                <CommentInterface postComments={post.comments.length} />
-              </div>
-            </div>
-            <div hidden={true}>
-              {post.comments.map((comment) => {
-                return <div key={comment.id}>{comment.content}</div>;
-              })}
+          </Link>
+          <div className='flex justify-around '>
+            <div
+              onClick={() => {
+                if (!user) {
+                  return;
+                }
+                setIsLiked(!isLiked);
+                if (!isLiked) {
+                  setPostLikes(postLikes + 1);
+                  likePost({
+                    postId: post.id,
+                    userId: user?.id,
+                    isLiked: isLiked,
+                  });
+                } else {
+                  setPostLikes(postLikes - 1);
+                  likePost({
+                    postId: post.id,
+                    userId: user?.id,
+                    isLiked: isLiked,
+                  });
+                }
+              }}
+            >
+              <LikeInterface likes={postLikes} isLiked={isLiked} />
             </div>
             <div
-              className={`items-center gap-4 ${
-                isCommenting ? 'flex' : 'hidden'
-              }`}
+              onClick={() => {
+                if (!user) {
+                  return;
+                }
+                setIsCommenting(!isCommenting);
+              }}
             >
-              <Image
-                src={user?.profileImageUrl as string}
-                width={48}
-                height={48}
-                className='h-full w-12 rounded-full'
-                alt={`${user?.username as string}'s profile picture`}
-              />
-              <div className='flex  grow'>
-                <div className='w-full'>
-                  <input
-                    type='text'
-                    onChange={(e) => setCommentContent(e.target.value)}
-                    value={commentContent}
-                    placeholder='Add a comment...'
-                    className='bg-transparent outline-none  w-full sm:w-auto'
-                    id='image-input'
-                  />
-                  <label htmlFor='image-input'>
-                    <div className='flex cursor-pointer gap-1 text-sm sm:w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
-                      <ImageIcon />
-                      <span className='hidden xs:inline text-accent'>
-                        Upload Image
-                      </span>
-                    </div>
-                  </label>
-                </div>
-                <button
-                  onClick={() => {
-                    addComment({
-                      postId: post.id,
-                      content: commentContent,
-                      imageUrl: commentImageUrl,
-                    });
-                  }}
-                >
-                  <span className='bg-accent text-inverseContent text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
-                    Comment
-                  </span>
-                </button>
-              </div>
+              <CommentInterface postComments={post.comments.length} />
             </div>
           </div>
-        </Link>
+          <div hidden={true}>
+            {post.comments.map((comment) => {
+              return <div key={comment.id}>{comment.content}</div>;
+            })}
+          </div>
+          <div
+            className={`items-center gap-4 ${isCommenting ? 'flex' : 'hidden'}`}
+          >
+            <Image
+              src={user?.profileImageUrl as string}
+              width={48}
+              height={48}
+              className='h-full w-12 rounded-full'
+              alt={`${user?.username as string}'s profile picture`}
+            />
+            <div className='flex  grow'>
+              <div className='w-full'>
+                <input
+                  type='text'
+                  onChange={(e) => setCommentContent(e.target.value)}
+                  value={commentContent}
+                  placeholder='Add a comment...'
+                  className='bg-transparent outline-none  w-full sm:w-auto'
+                  id='image-input'
+                />
+                <label htmlFor='image-input'>
+                  <div className='flex cursor-pointer gap-1 text-sm sm:w-[60%] rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+                    <ImageIcon />
+                    <span className='hidden xs:inline text-accent'>
+                      Upload Image
+                    </span>
+                  </div>
+                </label>
+              </div>
+              <button
+                onClick={() => {
+                  addComment({
+                    postId: post.id,
+                    content: commentContent,
+                    imageUrl: commentImageUrl,
+                  });
+                }}
+              >
+                <span className='bg-accent text-inverseContent text-sm mx-4 p-1 rounded cursor-pointer disabled:cursor-default'>
+                  Comment
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
