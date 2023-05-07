@@ -1,7 +1,9 @@
-const ProfileIcon = (props: { activeTab: string; username: string }) => {
+const ProfileIcon = (props: { activeTab: string; isOwnProfile: boolean }) => {
+  console.log('active', props.activeTab);
+  console.log('user', props.isOwnProfile);
   return (
     <span>
-      {props.activeTab === `${props.username}` ? (
+      {props.activeTab === '/[slug]' && props.isOwnProfile ? (
         <svg
           width='42px'
           height='42px'

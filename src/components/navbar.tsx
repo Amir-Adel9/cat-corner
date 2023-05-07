@@ -23,7 +23,7 @@ export const SideNavBar = (props: {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const [isActive, setIsActive] = useState(routeQuery);
+  const [isActive, setIsActive] = useState(router.pathname);
 
   const [isTheming, setIsTheming] = useState(false);
 
@@ -71,7 +71,7 @@ export const SideNavBar = (props: {
             >
               <ProfileIcon
                 activeTab={isActive}
-                username={`${isSignedIn ? (user.username as string) : ''}`}
+                isOwnProfile={user!.username === routeQuery ? true : false}
               />
               <span hidden={!isHovered}>Profile</span>
             </div>
@@ -187,6 +187,8 @@ export const BottomNavBar = () => {
   const { user, isSignedIn } = useUser();
   const router = useRouter();
 
+  const routeQuery = router.query.slug as string;
+
   const [isActive, setIsActive] = useState(router.pathname);
 
   return (
@@ -211,7 +213,7 @@ export const BottomNavBar = () => {
           >
             <ProfileIcon
               activeTab={isActive}
-              username={`${isSignedIn ? (user.username as string) : ''}`}
+              isOwnProfile={user!.username === routeQuery ? true : false}
             />
           </div>
         </Link>
