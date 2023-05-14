@@ -11,6 +11,17 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+
+    name String @db.VarChar(255)
+    email String @db.VarChar(255)
+    password String @db.VarChar(255)
+
+    likes Post[]
+}
+
 model Post {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
@@ -22,6 +33,7 @@ model Post {
     imageHeight Int @default(0)
 
     likes Int @default(0)
+    userLikes User[]
     comments Comment[]
 
     authorId String
