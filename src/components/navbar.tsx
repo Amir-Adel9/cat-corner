@@ -35,25 +35,34 @@ export const SideNavBar = (props: {
         isHovered ? 'w-[15%]' : 'w-[5%]'
       }`}
     >
-      <div className='flex justify-center items-center gap-1 group-hover:pl-5'>
-        <Image
-          src='/logo.png'
-          width={50}
-          height={50}
-          className='rounded-full'
-          alt='Cat Corner Logo'
-        />
-        <span hidden={!isHovered}>Cat Corner</span>
-      </div>
+      <Link href='/'>
+        <div className='flex justify-center items-center gap-1 cursor-pointer duration-200 hover:scale-105 group-hover:pl-5'>
+          <Image
+            src='/logo.png'
+            width={50}
+            height={50}
+            className='rounded-full inline'
+            onClick={() => {
+              setIsActive(router.pathname);
+              setIsTheming(false);
+            }}
+            alt='Cat Corner Logo'
+          />
+
+          <span className='font-bold' hidden={!isHovered}>
+            Cat Corner
+          </span>
+        </div>
+      </Link>
       <div className='h-1/2'>
         <div className='w-full h-full flex flex-col duration-200 items-center justify-evenly group-hover:items-start group-hover:pl-5'>
-          <Link href={'/'}>
+          <Link href='/'>
             <div
               onClick={() => {
                 setIsActive(router.pathname);
                 setIsTheming(false);
               }}
-              className='flex items-center cursor-pointer'
+              className='flex items-center cursor-pointer duration-200 hover:scale-110'
             >
               <HomeIcon activeTab={isActive} />
               <span className='ml-1' hidden={!isHovered}>
@@ -67,7 +76,7 @@ export const SideNavBar = (props: {
                 setIsActive(routeQuery);
                 setIsTheming(false);
               }}
-              className='flex items-center cursor-pointer group-hover:-translate-x-2'
+              className='flex items-center cursor-pointer group-hover:-translate-x-2 duration-200 hover:scale-110'
             >
               <ProfileIcon
                 activeTab={isActive}
@@ -81,7 +90,7 @@ export const SideNavBar = (props: {
               setIsActive('Likes');
               setIsTheming(false);
             }}
-            className='flex items-center cursor-pointer'
+            className='flex items-center cursor-pointer duration-200 hover:scale-110'
           >
             <LikesIcon activeTab={isActive} />
             <span className='ml-1' hidden={!isHovered}>
@@ -93,7 +102,7 @@ export const SideNavBar = (props: {
               setIsTheming(true);
               setIsActive('Theme');
             }}
-            className='flex items-center cursor-pointer'
+            className='flex items-center cursor-pointer duration-200 hover:scale-110'
           >
             <ThemeIcon activeTab={isActive} />
             <div className='ml-1' hidden={!isHovered}>
@@ -105,7 +114,7 @@ export const SideNavBar = (props: {
               setIsActive('Info');
               setIsTheming(false);
             }}
-            className='flex items-center cursor-pointer'
+            className='flex items-center cursor-pointer duration-200 hover:scale-110'
           >
             <InfoIcon activeTab={isActive} />
             <span className='ml-1' hidden={!isHovered}>

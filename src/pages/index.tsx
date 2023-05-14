@@ -34,14 +34,14 @@ dayjs.updateLocale('en', {
   relativeTime: {
     future: 'in %s',
     past: '%s ago',
-    s: '1s',
+    s: 'a few seconds',
     m: '1m',
     mm: '%dm',
     h: '1h',
     hh: '%dh',
     d: '1d',
     dd: '%dd',
-    M: '1m',
+    M: '1 month',
     MM: '%dm',
     y: '1y',
     yy: '%dy',
@@ -115,19 +115,30 @@ const CreatePostWizard = () => {
         />
         <div className='my-2'>
           {postImage && (
-            <Image
-              src={URL.createObjectURL(postImage as Blob)}
-              className='rounded'
-              alt='preview image'
-              width={300}
-              height={200}
-            />
+            <div className='relative w-[300px] rounded'>
+              <span
+                onClick={() => {
+                  setPostImage(null);
+                  setImageHasCat('');
+                }}
+                className='absolute w-8 h-8 left-0  cursor-pointer font-bold text-2xl hover:bg-inverseContent bg-[#222] rounded-[50%] text-center'
+              >
+                &times;
+              </span>
+              <Image
+                src={URL.createObjectURL(postImage as Blob)}
+                className='rounded'
+                alt='preview image'
+                width={300}
+                height={200}
+              />
+            </div>
           )}
         </div>
         <div className='flex items-center justify-start xs:justify-between'>
           <div className='flex items-center gap- sm:gap-5'>
             <label htmlFor='image-input'>
-              <div className='flex items-center gap-1 p-1 cursor-pointer rounded duration-200 hover:scale-105 hover:bg-[#222]'>
+              <div className='flex items-center gap-1 p-1 cursor-pointer rounded duration-200 hover:scale-110'>
                 <ImageIcon />
                 <div className='hidden xs:inline text-accent'>Upload Image</div>
               </div>
@@ -225,7 +236,7 @@ const CreatePostWizard = () => {
               <span>Uploading your image...</span>
             ) : (
               <button
-                className='bg-accent text-inverseContent mx-4 px-3 py-1 rounded cursor-pointer disabled:cursor-default'
+                className='bg-accent text-inverseContent mx-4 px-3 py-1 duration-200 hover:scale-110 hover:disabled:scale-100 rounded cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500 disabled:opacity-50'
                 disabled={!postImage}
                 onClick={() => {
                   if (!imageHasCat?.includes('approved')) {
