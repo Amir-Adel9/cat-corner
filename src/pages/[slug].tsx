@@ -77,14 +77,14 @@ const Profile: NextPage = () => {
                         className='flex sm:gap-5 cursor-pointer border-b border-accent py-5 sm:pl-5'
                       >
                         <div>
-                          <Link href={`${data.username as string}`}>
+                          <Link href={`${data?.username as string}`}>
                             <Image
                               src={data.profileImageUrl}
                               width={48}
                               height={48}
                               className='h-ful w-12 rounded-full hidden sm:inline'
                               alt={`${
-                                data.username as string
+                                data?.username as string
                               }'s profile picture`}
                             />
                           </Link>
@@ -98,10 +98,10 @@ const Profile: NextPage = () => {
                                 height={48}
                                 className='h-full w-12 rounded-full inline sm:hidden'
                                 alt={`${
-                                  data.username as string
+                                  data?.username as string
                                 }'s profile picture`}
                               />
-                              <Link href={`${data.username as string}`}>
+                              <Link href={`${data?.username as string}`}>
                                 <div className='flex items-center gap-2'>
                                   <span className='font-bold hover:underline'>{`${
                                     data.firstName ? data.firstName : ''
@@ -109,7 +109,7 @@ const Profile: NextPage = () => {
                                     data.lastName ? data.lastName : ''
                                   }`}</span>
                                   <span className='text-sm opacity-70 font-sans hover:underline'>{`@${
-                                    data.username as string
+                                    data?.username as string
                                   }`}</span>
                                 </div>
                               </Link>

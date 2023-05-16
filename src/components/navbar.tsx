@@ -80,7 +80,7 @@ export const SideNavBar = (props: {
             >
               <ProfileIcon
                 activeTab={isActive}
-                isOwnProfile={user!.username === routeQuery ? true : false}
+                isOwnProfile={user?.username === routeQuery ? true : false}
               />
               <span hidden={!isHovered}>Profile</span>
             </div>
@@ -151,16 +151,16 @@ export const SideNavBar = (props: {
           Save
         </div>
       </ul>
-      <div className='absolute bottom-2 group-hover:pl-5 group-hover:w-full'>
+      <div className='absolute bottom-2 group-hover:pl-5'>
         <div>
           {!isSignedIn && (
-            <div className='bg-constant text-secondary rounded px-2 py-1 mt-2'>
+            <div className='bg-constant text-secondary duration-200 rounded px-2 py-1 mt-2 hover:scale-110'>
               <SignInButton />
             </div>
           )}
           {!!isSignedIn && (
             <div className='flex group-hover:w-full'>
-              <div className='flex gap-1 items-center group-hover:w-full'>
+              <div className='flex gap-1 items-center'>
                 <Image
                   src={user?.profileImageUrl}
                   width={40}
@@ -173,13 +173,13 @@ export const SideNavBar = (props: {
                     !isHovered ? 'hidden' : 'flex'
                   }`}
                 >
-                  <div className='flex flex-col'>
+                  <div className='flex flex-col '>
                     <span>{user?.fullName}</span>
                     <span className='text-xs opacity-90'>{`@${
                       user?.username as string
                     }`}</span>
                   </div>
-                  <div className='bg-constant text-secondary rounded px-2 py-1 mt-2 mr-8'>
+                  <div className='bg-constant text-secondary rounded px-2 py-1 mt-2 mr-8 group-hover:ml-8'>
                     <SignOutButton />
                   </div>
                 </div>
@@ -213,7 +213,7 @@ export const BottomNavBar = () => {
           <HomeIcon activeTab={isActive} />
         </div>
 
-        <Link href={`/${isSignedIn ? (user.username as string) : ''}`}>
+        <Link href={`/${isSignedIn ? (user?.username as string) : ''}`}>
           <div
             onClick={() => {
               setIsActive(router.pathname);
@@ -222,7 +222,7 @@ export const BottomNavBar = () => {
           >
             <ProfileIcon
               activeTab={isActive}
-              isOwnProfile={user!.username === routeQuery ? true : false}
+              isOwnProfile={user?.username === routeQuery ? true : false}
             />
           </div>
         </Link>
