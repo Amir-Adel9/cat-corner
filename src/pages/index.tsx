@@ -91,7 +91,7 @@ const CreatePostWizard = () => {
         width={50}
         height={50}
         className='rounded-full'
-        alt={`${user.username!}'s profile picture`}
+        alt={`${user?.username as string}'s profile picture`}
       />
       <div className='relative flex text-sm sm:text-base grow flex-col justify-center'>
         <input
