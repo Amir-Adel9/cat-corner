@@ -489,7 +489,7 @@ const Home: NextPage = () => {
               <header className='fixed bg-red-700 flex items-center justify-center font-tilt text-lg h-[3%] w-full z-10 '>
                 <div>
                   This website is still under development, some features may be
-                  broken, give it a try tho.
+                  broken. (You need to be Signed in to Post, Like and Comment)
                 </div>
               </header>
               <CreatePostWizard />
